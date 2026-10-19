@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - NexusMart</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="/index.html" class="navbar-brand">NexusMart</a>
+            <div class="navbar-links" id="authLinks"></div>
+        </div>
+    </nav>
+
+    <main class="container" style="margin-top: 2rem;">
+        <h1>Checkout</h1>
+        
+        <div id="emptyCart" class="text-center hidden" style="padding: 3rem;">
+            <p style="color: #6b7280; margin-bottom: 1rem;">Your cart is empty</p>
+            <a href="/index.html" class="btn btn-primary">Continue Shopping</a>
+        </div>
+        
+        <div id="checkoutContent" style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+            <div class="card">
+                <h2 class="card-header">Order Confirmation</h2>
+                <p style="color: #6b7280; margin-bottom: 1rem;">Please review your order before placing it. This is a demo checkout without payment processing.</p>
+                <div id="error" class="error-message hidden"></div>
+                <button onclick="placeOrder()" id="placeOrderBtn" class="btn btn-primary" style="width: 100%;">Place Order</button>
+            </div>
+            
+            <div class="card" style="position: sticky; top: 5rem;">
+                <h2 class="card-header">Order Summary</h2>
+                <div id="cartSummary"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/api-client.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/cart.js"></script>
+    <script>
+        if (!authManager.isAuthenticated()) {
+            window.location.href = '/login.html';
+        }
+
+        if (cartManager.items.length === 0) {
+            document.getElementById('emptyCart').classList.remove('hidden');
+            document.getElementById('checkoutContent').classList.add('hidden');
+        }
+
+        function renderSummary() {
+            const cartSummary = document.getElementById('cartSummary');
+            
+            cartSummary.innerHTML = `
+                <div style="margin-bottom: 1rem;">
+                    ${cartManager.items.map(item => `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.875rem;">
+                            <span style="color: #6b7280;">${item.productName} x ${item.quantity}</span>
+                            <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="border-top: 1px solid #e5e7eb; padding-top: 0.5rem; margin-top: 0.5rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: #6b7280;">
+                        <span>Subtotal</span>
+                        <span>$${cartManager.getTotalPrice().toFixed(2)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: #6b7280;">
+                        <span>Shipping</span>
+                        <span>Free</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: #6b7280;">
+                        <span>Tax</span>
+                        <span>Calculated at checkout</span>
+                    </div>
+                    <div style="border-top: 1px solid #e5e7eb; padding-top: 0.5rem; margin-top: 0.5rem; display: flex; justify-content: space-between; font-size: 1.25rem; font-weight: bold;">
+                        <span>Total</span>
+                        <span>$${cartManager.getTotalPrice().toFixed(2)}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function placeOrder() {
+            const errorDiv = document.getElementById('error');
+            const placeOrderBtn = document.getElementById('placeOrderBtn');
+            
+            errorDiv.classList.add('hidden');
+            placeOrderBtn.disabled = true;
+            placeOrderBtn.textContent = 'Processing...';
+            
+            try {
+                const checkoutRequest = {
+                    items: cartManager.items.map(item => ({
+                        productId: item.productId,
+                        quantity: item.quantity
+                    }))
+                };
+                
+                await apiClient.checkout(checkoutRequest);
+                cartManager.clearCart();
+                window.location.href = '/checkout-success.html';
+            } catch (err) {
+                errorDiv.textContent = err.message;
+                errorDiv.classList.remove('hidden');
+                placeOrderBtn.disabled = false;
+                placeOrderBtn.textContent = 'Place Order';
+            }
+        }
+
+        renderSummary();
+    </script>
+</body>
+</html>

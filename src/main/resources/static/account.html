@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - NexusMart</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="/index.html" class="navbar-brand">NexusMart</a>
+            <div class="navbar-links" id="authLinks"></div>
+        </div>
+    </nav>
+
+    <main class="container" style="margin-top: 2rem;">
+        <h1>My Account</h1>
+        <p style="color: #6b7280; margin-bottom: 2rem;">Welcome back, <span id="userName"></span></p>
+        
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+            <div class="card animate-fade-in" style="animation-delay: 0s;">
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="width: 64px; height: 64px; background: linear-gradient(135deg, #2563eb, #1d4ed8); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 id="userNameCard" style="font-weight: 600;"></h3>
+                        <p id="userEmail" style="color: #6b7280; font-size: 0.875rem;"></p>
+                    </div>
+                </div>
+                
+                <div style="border-top: 1px solid #e5e7eb; padding-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.875rem; color: #6b7280; margin-bottom: 0.5rem; cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#6b7280'">
+                        <span>Role:</span>
+                        <span id="userRole"></span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.875rem; color: #6b7280; margin-bottom: 0.5rem; cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#6b7280'">
+                        <span>Member Since:</span>
+                        <span id="memberSince"></span>
+                    </div>
+                </div>
+                
+                <button onclick="authManager.logout()" class="btn btn-secondary" style="width: 100%; margin-top: 1rem; transition: all 0.3s ease;">Sign Out</button>
+            </div>
+            
+            <div class="card animate-fade-in" style="animation-delay: 0.2s;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h2 class="card-header" style="margin-bottom: 0;">Order History</h2>
+                    <button onclick="loadOrders()" class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">🔄 Refresh</button>
+                </div>
+                <div id="loading" class="text-center hidden">Loading orders...</div>
+                <div id="error" class="error-message hidden"></div>
+                <div id="orders"></div>
+                <div id="noOrders" class="text-center hidden" style="padding: 2rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🛒</div>
+                    <p style="color: #6b7280; margin-bottom: 1rem;">No orders yet</p>
+                    <a href="/index.html" class="btn btn-primary">Start Shopping</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/api-client.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        if (!authManager.isAuthenticated()) {
+            window.location.href = '/login.html';
+        }
+
+        document.getElementById('userName').textContent = authManager.user.name;
+        document.getElementById('userNameCard').textContent = authManager.user.name;
+        document.getElementById('userEmail').textContent = authManager.user.email;
+        document.getElementById('userRole').textContent = authManager.user.role === 'ROLE_ADMIN' ? 'Administrator' : 'Customer';
+        document.getElementById('memberSince').textContent = new Date().toLocaleDateString();
+
+        async function loadOrders() {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const ordersDiv = document.getElementById('orders');
+            const noOrders = document.getElementById('noOrders');
+            
+            loading.classList.remove('hidden');
+            error.classList.add('hidden');
+            
+            try {
+                const orders = await apiClient.getOrders();
+                
+                if (orders.length === 0) {
+                    noOrders.classList.remove('hidden');
+                    ordersDiv.classList.add('hidden');
+                } else {
+                    noOrders.classList.add('hidden');
+                    ordersDiv.classList.remove('hidden');
+                    
+                    ordersDiv.innerHTML = orders.map((order, index) => `
+                        <div class="order-card animate-slide-in" style="animation-delay: ${index * 0.1}s; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <div class="order-header">
+                                <div>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">Order #${order.id.slice(0, 8)}</p>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">${new Date(order.createdAt).toLocaleDateString()}</p>
+                                </div>
+                                <span class="order-status ${order.status.toLowerCase()}">${order.status}</span>
+                            </div>
+                            
+                            <div style="margin-bottom: 1rem;">
+                                ${order.items.map(item => `
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.875rem; margin-bottom: 0.25rem;">
+                                        <span style="color: #6b7280;">${item.productName} x ${item.quantity}</span>
+                                        <span>$${(item.priceSnapshot * item.quantity).toFixed(2)}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; padding-top: 0.5rem; border-top: 1px solid #e5e7eb;">
+                                <span style="color: #6b7280;">Total</span>
+                                <span style="font-weight: bold;">$${order.totalAmount.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (err) {
+                error.textContent = err.message;
+                error.classList.remove('hidden');
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        loadOrders();
+    </script>
+</body>
+</html>

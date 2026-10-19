@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - NexusMart</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="/index.html" class="navbar-brand">NexusMart Admin</a>
+            <div class="navbar-links">
+                <span style="color: #6b7280;">Welcome, <span id="userName"></span></span>
+                <button onclick="authManager.logout()" class="btn btn-secondary">Sign Out</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container" style="margin-top: 2rem;">
+        <h1>Dashboard</h1>
+        
+        <div id="loading" class="text-center hidden">Loading dashboard...</div>
+        <div id="error" class="error-message hidden"></div>
+        
+        <div id="dashboardContent">
+            <div class="stats-grid">
+                <div class="stat-card animate-fade-in" style="animation-delay: 0s;" onclick="animateStat(this)">
+                    <div class="stat-value" id="totalRevenue">$0.00</div>
+                    <div class="stat-label">Total Revenue</div>
+                    <div style="margin-top: 0.5rem; font-size: 0.75rem; color: #059669;">↑ 12% from last month</div>
+                </div>
+                <div class="stat-card animate-fade-in" style="animation-delay: 0.1s;" onclick="animateStat(this)">
+                    <div class="stat-value" id="totalOrders">0</div>
+                    <div class="stat-label">Total Orders</div>
+                    <div style="margin-top: 0.5rem; font-size: 0.75rem; color: #059669;">↑ 8% from last month</div>
+                </div>
+                <div class="stat-card animate-fade-in" style="animation-delay: 0.2s;" onclick="animateStat(this)">
+                    <div class="stat-value" id="activeSkus">0</div>
+                    <div class="stat-label">Active SKUs</div>
+                    <div style="margin-top: 0.5rem; font-size: 0.75rem; color: #6b7280;">Updated just now</div>
+                </div>
+                <div class="stat-card animate-fade-in" style="animation-delay: 0.3s;" onclick="animateStat(this)">
+                    <div class="stat-value" id="lowStockItems">0</div>
+                    <div class="stat-label">Low Stock Items</div>
+                    <div style="margin-top: 0.5rem; font-size: 0.75rem; color: #d97706;">Needs attention</div>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div class="card animate-fade-in" style="animation-delay: 0.4s;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h2 class="card-header" style="margin-bottom: 0;">Recent Products</h2>
+                        <a href="/index.html" style="color: #2563eb; font-size: 0.875rem; transition: color 0.3s;" onmouseover="this.style.color='#1d4ed8'" onmouseout="this.style.color='#2563eb'">View All</a>
+                    </div>
+                    <div id="recentProducts"></div>
+                </div>
+                
+                <div class="card animate-fade-in" style="animation-delay: 0.5s;">
+                    <h2 class="card-header">Quick Actions</h2>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <a href="/index.html" class="btn btn-primary" style="display: block; text-align: center;">Browse Products</a>
+                        <a href="/account.html" class="btn btn-secondary" style="display: block; text-align: center;">View Orders</a>
+                        <button onclick="refreshDashboard()" class="btn btn-secondary" style="display: block; text-align: center;">🔄 Refresh Dashboard</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/api-client.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        if (!authManager.isAuthenticated() || !authManager.isAdmin()) {
+            window.location.href = '/index.html';
+        }
+
+        document.getElementById('userName').textContent = authManager.user.name;
+
+        async function loadDashboard() {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const dashboardContent = document.getElementById('dashboardContent');
+            
+            loading.classList.remove('hidden');
+            error.classList.add('hidden');
+            dashboardContent.classList.add('hidden');
+            
+            try {
+                const [stats, products] = await Promise.all([
+                    apiClient.getAdminStats(),
+                    apiClient.getProducts({ page: 0, size: 5 })
+                ]);
+                
+                document.getElementById('totalRevenue').textContent = `$${stats.totalRevenue.toFixed(2)}`;
+                document.getElementById('totalOrders').textContent = stats.totalOrders;
+                document.getElementById('activeSkus').textContent = stats.activeSkus;
+                document.getElementById('lowStockItems').textContent = stats.lowStockItems;
+                
+                const recentProducts = document.getElementById('recentProducts');
+                recentProducts.innerHTML = products.content.map((product, index) => `
+                    <div class="animate-slide-in" style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-bottom: 1px solid #e5e7eb; animation-delay: ${index * 0.1}s; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">
+                        <div>
+                            <div style="font-weight: 600;">${product.name}</div>
+                            <div style="font-size: 0.875rem; color: #6b7280;">${product.category}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-weight: bold; color: #2563eb;">$${product.price.toFixed(2)}</div>
+                            <div style="font-size: 0.875rem; color: ${product.stock < 5 ? '#d97706' : '#6b7280'};">${product.stock} in stock</div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                dashboardContent.classList.remove('hidden');
+            } catch (err) {
+                error.textContent = err.message;
+                error.classList.remove('hidden');
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        function animateStat(element) {
+            element.classList.add('animate-pulse');
+            setTimeout(() => element.classList.remove('animate-pulse'), 500);
+        }
+
+        function refreshDashboard() {
+            const btn = event.target;
+            btn.textContent = '⏳ Loading...';
+            btn.disabled = true;
+            
+            loadDashboard().then(() => {
+                btn.textContent = '🔄 Refresh Dashboard';
+                btn.disabled = false;
+                showToast('Dashboard refreshed!', 'success');
+            });
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type} animate-fade-in`;
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#059669' : '#dc2626'};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 0.5rem;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                z-index: 1000;
+                animation: slideIn 0.3s ease-out;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'fadeOut 0.3s ease-out forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 2000);
+        }
+
+        loadDashboard();
+    </script>
+</body>
+</html>

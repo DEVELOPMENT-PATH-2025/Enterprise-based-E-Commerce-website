@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: nexusmart-api
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/nexusmart_db
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: 12345
+
+  h2:
+    console:
+      enabled: true
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+
+  flyway:
+    enabled: false
+
+server:
+  port: 8080
+
+stripe:
+  secret-key: ${STRIPE_SECRET_KEY:sk_test_your_stripe_secret_key}
+  publishable-key: ${STRIPE_PUBLISHABLE_KEY:pk_test_your_stripe_publishable_key}
+  webhook-secret: ${STRIPE_WEBHOOK_SECRET:whsec_your_webhook_secret}
+
+jwt:
+  secret: ${JWT_SECRET:your-super-secret-jwt-key-at-least-256-bits-long}
+  expiration: 86400000
+
+openai:
+  api-key: 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
+  embedding-model: text-embedding-3-small
+
+logging:
+  level:
+    com.nexusmart.api: DEBUG
+    org.springframework.security: DEBUG

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - NexusMart</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background-color: #f9fafb; padding: 1rem;">
+        <div class="card" style="max-width: 400px; width: 100%;">
+            <h1 style="text-align: center; margin-bottom: 1.5rem;">Create your NexusMart account</h1>
+            <p style="text-align: center; color: #6b7280; margin-bottom: 1.5rem;">Enterprise E-Commerce Platform</p>
+            
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="name">Full name</label>
+                    <input type="text" id="name" name="name" required minlength="2">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required minlength="8">
+                </div>
+                
+                <div id="error" class="error-message hidden"></div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Create account</button>
+            </form>
+            
+            <p style="text-align: center; margin-top: 1.5rem; color: #6b7280;">
+                Already have an account? <a href="/login.html" style="color: #2563eb;">Sign in</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="/js/api-client.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        const registerForm = document.getElementById('registerForm');
+        const errorDiv = document.getElementById('error');
+        
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            errorDiv.classList.add('hidden');
+            
+            const submitBtn = registerForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating account...';
+            
+            try {
+                const response = await apiClient.register({ name, email, password });
+                
+                authManager.setUser({
+                    id: response.userId,
+                    email: response.email,
+                    name: response.name,
+                    role: response.role
+                });
+                
+                apiClient.setToken(response.token);
+                
+                window.location.href = '/index.html';
+            } catch (err) {
+                errorDiv.textContent = err.message;
+                errorDiv.classList.remove('hidden');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create account';
+            }
+        });
+    </script>
+</body>
+</html>

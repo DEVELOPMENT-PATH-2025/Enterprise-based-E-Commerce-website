@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Placed - NexusMart</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background-color: #f9fafb; padding: 1rem;">
+        <div class="card" style="max-width: 500px; width: 100%; text-align: center;">
+            <div style="width: 80px; height: 80px; background-color: #d1fae5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+            
+            <h1 style="margin-bottom: 0.5rem;">Order Placed Successfully!</h1>
+            <p style="color: #6b7280; margin-bottom: 1.5rem;">Thank you for your purchase. Your order has been confirmed and will be processed shortly.</p>
+            
+            <p style="color: #6b7280; margin-bottom: 1.5rem; font-size: 0.875rem;">You will be redirected to your account page in 5 seconds...</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <a href="/account.html" class="btn btn-primary" style="display: block; text-align: center;">View Your Orders</a>
+                <a href="/index.html" class="btn btn-secondary" style="display: block; text-align: center;">Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        setTimeout(() => {
+            window.location.href = '/account.html';
+        }, 5000);
+    </script>
+</body>
+</html>

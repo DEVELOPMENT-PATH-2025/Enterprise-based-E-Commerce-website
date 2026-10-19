@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - NexusMart</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="/index.html" class="navbar-brand">NexusMart</a>
+            <div class="navbar-links" id="authLinks"></div>
+        </div>
+    </nav>
+
+    <main class="container" style="margin-top: 2rem;">
+        <h1>Shopping Cart</h1>
+        
+        <div id="emptyCart" class="text-center hidden" style="padding: 3rem;">
+            <p style="color: #6b7280; margin-bottom: 1rem;">Your cart is empty</p>
+            <a href="/index.html" class="btn btn-primary">Continue Shopping</a>
+        </div>
+        
+        <div id="cartContent" style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+            <div class="card">
+                <div id="cartItems"></div>
+            </div>
+            
+            <div class="card" style="position: sticky; top: 5rem;">
+                <h2 class="card-header">Order Summary</h2>
+                <div id="cartSummary"></div>
+                <a href="/checkout.html" class="btn btn-primary" style="width: 100%; display: block; text-align: center; margin-top: 1rem;">Proceed to Checkout</a>
+                <button onclick="cartManager.clearCart()" class="btn btn-secondary" style="width: 100%; margin-top: 0.5rem;">Clear Cart</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/api-client.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/cart.js"></script>
+    <script>
+        if (!authManager.isAuthenticated()) {
+            window.location.href = '/login.html';
+        }
+
+        function renderCart() {
+            const emptyCart = document.getElementById('emptyCart');
+            const cartContent = document.getElementById('cartContent');
+            const cartItems = document.getElementById('cartItems');
+            const cartSummary = document.getElementById('cartSummary');
+            
+            if (cartManager.items.length === 0) {
+                emptyCart.classList.remove('hidden');
+                cartContent.classList.add('hidden');
+                return;
+            }
+            
+            emptyCart.classList.add('hidden');
+            cartContent.classList.remove('hidden');
+            
+            cartItems.innerHTML = cartManager.items.map((item, index) => `
+                <div class="cart-item animate-slide-in" style="animation-delay: ${index * 0.1}s;">
+                    <img src="${item.imageUrl || '/images/placeholder.png'}" alt="${item.productName}" class="cart-item-image">
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.productName}</div>
+                        <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+                    </div>
+                    <div class="cart-item-quantity">
+                        <button class="quantity-btn" onclick="updateQuantity('${item.productId}', ${item.quantity - 1})">-</button>
+                        <span id="qty-${item.productId}" class="quantity-value">${item.quantity}</span>
+                        <button class="quantity-btn" onclick="updateQuantity('${item.productId}', ${item.quantity + 1})">+</button>
+                    </div>
+                    <div id="total-${item.productId}" style="font-weight: bold; margin-left: 1rem; transition: all 0.3s ease;">$${(item.price * item.quantity).toFixed(2)}</div>
+                    <button onclick="removeItem('${item.productId}')" class="btn btn-danger" style="margin-left: 1rem; transition: all 0.3s ease;">×</button>
+                </div>
+            `).join('');
+            
+            cartSummary.innerHTML = `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span>Subtotal (${cartManager.getTotalItems()} items)</span>
+                    <span id="subtotal">$${cartManager.getTotalPrice().toFixed(2)}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: #6b7280;">
+                    <span>Shipping</span>
+                    <span>Free</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: #6b7280;">
+                    <span>Tax</span>
+                    <span>Calculated at checkout</span>
+                </div>
+                <div style="border-top: 1px solid #e5e7eb; padding-top: 0.5rem; margin-top: 0.5rem; display: flex; justify-content: space-between; font-size: 1.25rem; font-weight: bold;">
+                    <span>Total</span>
+                    <span id="grandTotal">$${cartManager.getTotalPrice().toFixed(2)}</span>
+                </div>
+            `;
+        }
+
+        function updateQuantity(productId, newQuantity) {
+            if (newQuantity < 1) return;
+            
+            const qtyElement = document.getElementById(`qty-${productId}`);
+            const totalElement = document.getElementById(`total-${productId}`);
+            
+            // Animate quantity change
+            qtyElement.style.transform = 'scale(1.2)';
+            qtyElement.style.color = '#2563eb';
+            
+            setTimeout(() => {
+                qtyElement.style.transform = 'scale(1)';
+                qtyElement.style.color = 'inherit';
+            }, 200);
+            
+            cartManager.updateQuantity(productId, newQuantity);
+        }
+
+        function removeItem(productId) {
+            const itemElement = document.querySelector(`button[onclick="removeItem('${productId}')"]`).closest('.cart-item');
+            itemElement.style.animation = 'fadeOut 0.3s ease-out forwards';
+            
+            setTimeout(() => {
+                cartManager.removeItem(productId);
+                showToast('Item removed from cart', 'success');
+            }, 300);
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type} animate-fade-in`;
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#059669' : '#dc2626'};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 0.5rem;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                z-index: 1000;
+                animation: slideIn 0.3s ease-out;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'fadeOut 0.3s ease-out forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 2000);
+        }
+
+        renderCart();
+        
+        // Re-render cart when items change
+        const originalSave = cartManager.save.bind(cartManager);
+        cartManager.save = function() {
+            originalSave();
+            renderCart();
+        };
+    </script>
+</body>
+</html>
