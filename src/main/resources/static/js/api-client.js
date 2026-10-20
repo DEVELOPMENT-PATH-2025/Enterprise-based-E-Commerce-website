@@ -1,18 +1,23 @@
-const API_BASE_URL = '/api/v1';
+import { CONFIG } from './config.js';
+import toastManager from './toast.js';
 
 class ApiClient {
     constructor() {
-        this.token = localStorage.getItem('token');
+        this.token = localStorage.getItem(CONFIG.TOKEN_STORAGE_KEY);
     }
 
     setToken(token) {
         this.token = token;
-        localStorage.setItem('token', token);
+        localStorage.setItem(CONFIG.TOKEN_STORAGE_KEY, token);
+    }
+
+    getToken() {
+        return this.token || localStorage.getItem(CONFIG.TOKEN_STORAGE_KEY);
     }
 
     clearToken() {
         this.token = null;
-        localStorage.removeItem('token');
+        localStorage.removeItem(CONFIG.TOKEN_STORAGE_KEY);
     }
 
     async request(endpoint, options = {}) {
@@ -25,20 +30,35 @@ class ApiClient {
             headers['Authorization'] = `Bearer ${this.token}`;
         }
 
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-            ...options,
-            headers,
-        });
+        try {
+            const response = await fetch(`${CONFIG.API_BASE_URL}${endpoint}`, {
+                ...options,
+                headers,
+            });
 
-        if (!response.ok) {
-            const error = await response.json().catch(() => ({ message: 'An error occurred' }));
-            throw new Error(error.message || error.detail || 'Request failed');
+            if (response.status === 429) {
+                const retryAfter = response.headers.get('Retry-After') || 60;
+                window.dispatchEvent(new CustomEvent('rate-limit-triggered', { 
+                    detail: { retryAfter: parseInt(retryAfter) } 
+                }));
+                throw new Error('Rate limit exceeded. Please wait before retrying.');
+            }
+
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({ message: 'An error occurred' }));
+                throw new Error(error.message || error.detail || 'Request failed');
+            }
+
+            return response.json();
+        } catch (error) {
+            if (error.message.includes('Rate limit')) {
+                throw error;
+            }
+            toastManager.error('API Error', error.message);
+            throw error;
         }
-
-        return response.json();
     }
 
-    // Auth endpoints
     async login(data) {
         return this.request('/auth/login', {
             method: 'POST',
@@ -53,7 +73,6 @@ class ApiClient {
         });
     }
 
-    // Product endpoints (public)
     async getProducts(params = {}) {
         const searchParams = new URLSearchParams();
         if (params.page) searchParams.append('page', params.page);
@@ -73,7 +92,6 @@ class ApiClient {
         return this.request(`/products/search?q=${encodeURIComponent(query)}`);
     }
 
-    // Order endpoints (authenticated)
     async checkout(data) {
         return this.request('/orders/checkout', {
             method: 'POST',
@@ -89,7 +107,6 @@ class ApiClient {
         return this.request(`/orders/${id}`);
     }
 
-    // Admin endpoints (authenticated, admin only)
     async createProduct(data) {
         return this.request('/admin/products', {
             method: 'POST',
@@ -116,3 +133,4 @@ class ApiClient {
 }
 
 const apiClient = new ApiClient();
+export default apiClient;

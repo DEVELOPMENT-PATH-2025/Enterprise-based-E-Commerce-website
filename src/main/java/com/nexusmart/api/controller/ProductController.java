@@ -3,8 +3,6 @@ package com.nexusmart.api.controller;
 import com.nexusmart.api.dto.response.ProductResponse;
 import com.nexusmart.api.entity.Product;
 import com.nexusmart.api.repository.ProductRepository;
-import org.springframework.ai.embedding.EmbeddingModel;
-import org.springframework.ai.embedding.EmbeddingResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -21,11 +19,9 @@ import java.util.stream.Collectors;
 public class ProductController {
 
     private final ProductRepository productRepository;
-    private final EmbeddingModel embeddingModel;
 
-    public ProductController(ProductRepository productRepository, EmbeddingModel embeddingModel) {
+    public ProductController(ProductRepository productRepository) {
         this.productRepository = productRepository;
-        this.embeddingModel = embeddingModel;
     }
 
     @GetMapping
@@ -73,12 +69,13 @@ public class ProductController {
 
     @GetMapping("/search")
     public ResponseEntity<List<ProductResponse>> searchProducts(@RequestParam String q) {
-        EmbeddingResponse embeddingResponse = embeddingModel.embedForResponse(List.of(q));
-        String embedding = embeddingResponse.getResults().get(0).getOutput().toString();
+        // Simple text-based search without AI embeddings
+        List<Product> products = productRepository.findAll().stream()
+            .filter(p -> p.getName().toLowerCase().contains(q.toLowerCase()) ||
+                       p.getDescription().toLowerCase().contains(q.toLowerCase()))
+            .collect(Collectors.toList());
         
-        List<Product> similarProducts = productRepository.findNearestNeighbors(embedding, 10);
-        
-        List<ProductResponse> response = similarProducts.stream()
+        List<ProductResponse> response = products.stream()
             .map(this::mapToResponse)
             .collect(Collectors.toList());
         

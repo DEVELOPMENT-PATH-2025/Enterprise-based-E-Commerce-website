@@ -1,7 +1,6 @@
 -- Seed default admin user
 -- Password: Admin@123 (hashed with BCrypt)
 INSERT INTO users (email, password_hash, name, role) VALUES
-('admin@nexusmart.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Admin User', 'ROLE_ADMIN');
 
 -- Seed sample products across categories
 INSERT INTO products (name, description, price, stock, category, image_url) VALUES
@@ -20,3 +19,4 @@ INSERT INTO products (name, description, price, stock, category, image_url) VALU
 ('Phone Stand Adjustable', 'Universal phone stand with adjustable angle and height. Compatible with all smartphones and tablets. Non-slip base.', 19.99, 180, 'Accessories', 'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=500'),
 ('Cable Management Kit', 'Complete cable management kit with velcro ties, cable clips, and organizer box. Keep your workspace neat and organized.', 24.99, 220, 'Accessories', 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500'),
 ('Screen Cleaning Kit', 'Professional screen cleaning kit with microfiber cloth and alcohol-free solution. Safe for all screens including laptops, phones, and tablets.', 14.99, 300, 'Accessories', 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500');
+('Macbook M4 Pro', 'Professional for coders, developers and UI/UX and others', 80.99, 350, 'Accessories', 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500');

@@ -40,11 +40,13 @@ public class AuthService {
             throw new AuthenticationException("Email already registered");
         }
         
+        String role = request.getRole() != null ? request.getRole() : "ROLE_CUSTOMER";
+        
         User user = new User(
             request.getEmail(),
             passwordEncoder.encode(request.getPassword()),
             request.getName(),
-            "ROLE_CUSTOMER"
+            role
         );
         userRepository.save(user);
         

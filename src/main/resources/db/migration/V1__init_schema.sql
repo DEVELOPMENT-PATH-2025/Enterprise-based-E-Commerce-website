@@ -20,7 +20,7 @@ CREATE TABLE products (
     stock INTEGER NOT NULL DEFAULT 0,
     image_url VARCHAR(500),
     category VARCHAR(100),
-    -- vector_embedding vector(1536), -- Disabled: requires pgvector extension
+    -- vector_embedding vector(1536), --x Disabled: requires pgvector extension
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
