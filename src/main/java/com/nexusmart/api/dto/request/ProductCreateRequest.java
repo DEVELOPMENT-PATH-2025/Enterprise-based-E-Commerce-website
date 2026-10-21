@@ -27,8 +27,6 @@ public class ProductCreateRequest {
     @Size(max = 100, message = "Category must not exceed 100 characters")
     private String category;
 
-    @NotBlank(message = "Image URL is required")
-    @URL(message = "Image URL must be valid")
     private String imageUrl;
 
     public ProductCreateRequest() {}

@@ -73,6 +73,33 @@ class ApiClient {
         });
     }
 
+    async updateProfile(data) {
+        return this.request('/auth/profile', {
+            method: 'PUT',
+            body: JSON.stringify(data),
+        });
+    }
+
+    async uploadImage(formData) {
+        const headers = {};
+        if (this.token) {
+            headers['Authorization'] = `Bearer ${this.token}`;
+        }
+
+        const response = await fetch(`${CONFIG.API_BASE_URL}/admin/products/upload`, {
+            method: 'POST',
+            headers,
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const error = await response.json().catch(() => ({ message: 'Upload failed' }));
+            throw new Error(error.message || error.detail || 'Upload failed');
+        }
+
+        return response.text();
+    }
+
     async getProducts(params = {}) {
         const searchParams = new URLSearchParams();
         if (params.page) searchParams.append('page', params.page);

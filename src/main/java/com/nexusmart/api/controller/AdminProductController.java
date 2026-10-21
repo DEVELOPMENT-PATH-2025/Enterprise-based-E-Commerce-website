@@ -10,6 +10,7 @@ import com.nexusmart.api.repository.ProductRepository;
 import com.nexusmart.api.security.UserPrincipal;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -50,31 +51,17 @@ public class AdminProductController {
         }
     }
 
-    @PostMapping(consumes = "multipart/form-data")
-    @Transactional
-    public ResponseEntity<ProductResponse> createProductWithImage(
-            @RequestParam("image") MultipartFile image,
-            @RequestParam("name") String name,
-            @RequestParam("category") String category,
-            @RequestParam("description") String description,
-            @RequestParam("price") BigDecimal price,
-            @RequestParam("stock") Integer stock) throws IOException {
-        
-        // Save image file
-        String fileName = UUID.randomUUID() + "_" + image.getOriginalFilename();
-        Path filePath = Paths.get(UPLOAD_DIR + fileName);
-        Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-        
-        String imageUrl = "/uploads/products/" + fileName;
-        
-        Product product = new Product(name, description, price, stock, imageUrl, category);
+    @PostMapping
+    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductCreateRequest request) {
+        Product product = new Product(
+            request.getName(),
+            request.getDescription(),
+            request.getPrice(),
+            request.getStock(),
+            request.getImageUrl() != null ? request.getImageUrl() : "https://via.placeholder.com/400x300?text=No+Image",
+            request.getCategory()
+        );
         Product savedProduct = productRepository.save(product);
-        productRepository.flush();
-        
-        System.out.println("Product saved with ID: " + savedProduct.getId());
-        System.out.println("Product name: " + savedProduct.getName());
-        System.out.println("Product image URL: " + savedProduct.getImageUrl());
-        
         return ResponseEntity.ok(mapToResponse(savedProduct));
     }
 
@@ -136,6 +123,31 @@ public class AdminProductController {
 
         AdminStatsResponse stats = new AdminStatsResponse(totalRevenue, totalOrders, activeSkus, lowStockItems);
         return ResponseEntity.ok(stats);
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("File is empty");
+        }
+
+        try {
+            // Generate unique filename
+            String originalFilename = file.getOriginalFilename();
+            String fileExtension = originalFilename != null ? originalFilename.substring(originalFilename.lastIndexOf(".")) : ".jpg";
+            String uniqueFilename = UUID.randomUUID().toString() + fileExtension;
+
+            // Save file
+            Path uploadPath = Paths.get(UPLOAD_DIR);
+            Path filePath = uploadPath.resolve(uniqueFilename);
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            // Return the URL path
+            String imageUrl = "/uploads/products/" + uniqueFilename;
+            return ResponseEntity.ok(imageUrl);
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().body("Failed to upload file: " + e.getMessage());
+        }
     }
 
     private ProductResponse mapToResponse(Product product) {

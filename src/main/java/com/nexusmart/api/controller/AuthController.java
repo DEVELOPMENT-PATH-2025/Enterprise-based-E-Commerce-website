@@ -1,11 +1,14 @@
 package com.nexusmart.api.controller;
 
 import com.nexusmart.api.dto.request.LoginRequest;
+import com.nexusmart.api.dto.request.ProfileUpdateRequest;
 import com.nexusmart.api.dto.request.RegisterRequest;
 import com.nexusmart.api.dto.response.AuthResponse;
 import com.nexusmart.api.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,5 +34,12 @@ public class AuthController {
     @PostMapping("/google")
     public ResponseEntity<AuthResponse> googleAuth(@RequestBody String googleToken) {
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<AuthResponse> updateProfile(
+            @Valid @RequestBody ProfileUpdateRequest request,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(authService.updateProfile(request, userDetails.getUsername()));
     }
 }

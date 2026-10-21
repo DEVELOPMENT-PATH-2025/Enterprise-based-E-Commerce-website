@@ -152,8 +152,23 @@
                             </div>
                         </div>
                         <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-secondary); font-size: 0.85rem;">Image URL</label>
-                            <input type="url" id="productImageUrl" class="cyber-input" placeholder="https://example.com/image.jpg">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-secondary); font-size: 0.85rem;">Product Image</label>
+                            <div id="imageUploadZone" class="border-2 border-dashed border-slate-600/60 rounded-lg p-6 text-center cursor-pointer hover:border-cyan-500/50 hover:bg-slate-800/30 transition" style="background: rgba(30, 41, 59, 0.4);">
+                                <input type="file" id="productImageFile" accept="image/*" class="hidden">
+                                <div id="uploadPlaceholder">
+                                    <svg class="w-12 h-12 mx-auto text-slate-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                    </svg>
+                                    <p class="text-sm text-slate-400">Drag & drop image here or click to upload</p>
+                                    <p class="text-xs text-slate-500 mt-1">Supports: JPG, PNG, GIF, WebP</p>
+                                </div>
+                                <div id="uploadPreview" class="hidden">
+                                    <img id="previewImage" class="max-h-32 mx-auto rounded-lg mb-2" src="" alt="Preview">
+                                    <p id="fileName" class="text-xs text-slate-400"></p>
+                                    <button type="button" onclick="removeImage()" class="text-xs text-red-400 hover:text-red-300 mt-2">Remove</button>
+                                </div>
+                            </div>
+                            <input type="hidden" id="productImageUrl">
                         </div>
                         <button type="submit" class="cyber-button" style="width: 100%; background: linear-gradient(135deg, gold, #ffaa00);">
                             <i data-lucide="plus" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 0.5rem;"></i>
@@ -195,22 +210,23 @@
 
         document.getElementById('addProductForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const name = document.getElementById('productName').value;
             const category = document.getElementById('productCategory').value;
             const description = document.getElementById('productDescription').value;
             const price = parseFloat(document.getElementById('productPrice').value);
             const stock = parseInt(document.getElementById('productStock').value);
             const imageUrl = document.getElementById('productImageUrl').value || 'https://via.placeholder.com/400x300?text=No+Image';
-            
+
             const submitBtn = e.target.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<div class="loading-spinner" style="width: 16px; height: 16px; border-width: 2px; display: inline-block; vertical-align: middle; margin-right: 0.5rem;"></div> Initializing...';
-            
+
             try {
                 await apiClient.createProduct({ name, category, description, price, stock, imageUrl });
                 toastManager.success('Product Initialized', `${name} added to inventory`);
                 e.target.reset();
+                removeImage();
                 loadDashboard();
             } catch (err) {
                 toastManager.error('Initialization Failed', err.message);
@@ -220,6 +236,84 @@
                 lucide.createIcons();
             }
         });
+
+        // Image upload handling
+        const uploadZone = document.getElementById('imageUploadZone');
+        const fileInput = document.getElementById('productImageFile');
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        const uploadPreview = document.getElementById('uploadPreview');
+        const previewImage = document.getElementById('previewImage');
+        const fileName = document.getElementById('fileName');
+        const imageUrlInput = document.getElementById('productImageUrl');
+
+        uploadZone.addEventListener('click', () => fileInput.click());
+
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('border-cyan-500/50', 'bg-slate-800/30');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('border-cyan-500/50', 'bg-slate-800/30');
+        });
+
+        uploadZone.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('border-cyan-500/50', 'bg-slate-800/30');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                await handleFileUpload(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', async (e) => {
+            if (e.target.files.length > 0) {
+                await handleFileUpload(e.target.files[0]);
+            }
+        });
+
+        async function handleFileUpload(file) {
+            if (!file.type.startsWith('image/')) {
+                toastManager.error('Invalid File', 'Please upload an image file');
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                toastManager.error('File Too Large', 'Please upload an image smaller than 5MB');
+                return;
+            }
+
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImage.src = e.target.result;
+                fileName.textContent = file.name;
+                uploadPlaceholder.classList.add('hidden');
+                uploadPreview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+
+            // Upload to server
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                const imageUrl = await apiClient.uploadImage(formData);
+                imageUrlInput.value = imageUrl;
+                toastManager.success('Image Uploaded', 'Product image uploaded successfully');
+            } catch (error) {
+                toastManager.error('Upload Failed', error.message);
+                removeImage();
+            }
+        }
+
+        window.removeImage = function() {
+            fileInput.value = '';
+            imageUrlInput.value = '';
+            previewImage.src = '';
+            fileName.textContent = '';
+            uploadPlaceholder.classList.remove('hidden');
+            uploadPreview.classList.add('hidden');
+        };
 
         async function loadDashboard() {
             const error = document.getElementById('error');

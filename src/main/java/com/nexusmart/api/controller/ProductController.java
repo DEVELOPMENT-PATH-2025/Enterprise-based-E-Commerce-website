@@ -74,11 +74,11 @@ public class ProductController {
             .filter(p -> p.getName().toLowerCase().contains(q.toLowerCase()) ||
                        p.getDescription().toLowerCase().contains(q.toLowerCase()))
             .collect(Collectors.toList());
-        
+
         List<ProductResponse> response = products.stream()
             .map(this::mapToResponse)
             .collect(Collectors.toList());
-        
+
         return ResponseEntity.ok(response);
     }
 

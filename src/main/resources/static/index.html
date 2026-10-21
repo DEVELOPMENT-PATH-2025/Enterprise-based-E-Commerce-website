@@ -513,5 +513,99 @@
         loadProducts();
         lucide.createIcons();
     </script>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-card w-full max-w-md p-6 relative">
+            <button onclick="closeEditProfileModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+            <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                Edit Profile
+            </h2>
+            <form id="editProfileForm" onsubmit="handleProfileUpdate(event)">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Full Name</label>
+                    <input type="text" id="profileName" name="name" required
+                           class="w-full bg-slate-800/80 border border-slate-700/60 text-slate-200 rounded-lg px-4 py-2.5 focus:outline-none focus:border-cyan-500/50 transition"
+                           placeholder="Enter your full name">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Current Password (only if changing password)</label>
+                    <input type="password" id="currentPassword" name="currentPassword"
+                           class="w-full bg-slate-800/80 border border-slate-700/60 text-slate-200 rounded-lg px-4 py-2.5 focus:outline-none focus:border-cyan-500/50 transition"
+                           placeholder="Enter current password">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-slate-300 mb-2">New Password (optional)</label>
+                    <input type="password" id="newPassword" name="newPassword"
+                           class="w-full bg-slate-800/80 border border-slate-700/60 text-slate-200 rounded-lg px-4 py-2.5 focus:outline-none focus:border-cyan-500/50 transition"
+                           placeholder="Enter new password (min 6 characters)">
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" onclick="closeEditProfileModal()"
+                            class="flex-1 py-2.5 px-4 bg-slate-700/60 hover:bg-slate-700 text-slate-200 rounded-lg font-semibold transition">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            class="flex-1 py-2.5 px-4 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-lg font-bold shadow-lg shadow-cyan-500/20 transition">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import apiClient from './js/api-client.js';
+        import authManager from './js/auth.js';
+
+        function openEditProfileModal() {
+            const modal = document.getElementById('editProfileModal');
+            const user = authManager.getUser();
+            if (user) {
+                document.getElementById('profileName').value = user.name;
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeEditProfileModal() {
+            const modal = document.getElementById('editProfileModal');
+            modal.classList.add('hidden');
+            document.getElementById('editProfileForm').reset();
+        }
+
+        async function handleProfileUpdate(event) {
+            event.preventDefault();
+            const form = event.target;
+            const name = form.name.value;
+            const currentPassword = form.currentPassword.value;
+            const newPassword = form.newPassword.value;
+
+            // Validation
+            if (newPassword && !currentPassword) {
+                alert('Please enter your current password to change your password');
+                return;
+            }
+
+            try {
+                const response = await apiClient.updateProfile({ name, currentPassword, newPassword });
+                authManager.setUser(response, response.token);
+                closeEditProfileModal();
+                alert('Profile updated successfully!');
+            } catch (error) {
+                alert('Failed to update profile: ' + error.message);
+            }
+        }
+
+        window.openEditProfileModal = openEditProfileModal;
+        window.closeEditProfileModal = closeEditProfileModal;
+        window.handleProfileUpdate = handleProfileUpdate;
+    </script>
 </body>
 </html>
