@@ -73,7 +73,7 @@ public class AuthService {
             user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
         }
 
-        userRepository.save(user);
+        userRepository.saveAndFlush(user);
 
         // Generate new token with updated info
         String token = jwtTokenProvider.generateToken(user.getId(), user.getEmail(), user.getRole());

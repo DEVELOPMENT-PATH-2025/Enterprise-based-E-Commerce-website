@@ -530,6 +530,12 @@
             </h2>
             <form id="editProfileForm" onsubmit="handleProfileUpdate(event)">
                 <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Email</label>
+                    <input type="email" id="profileEmail" name="email" disabled
+                           class="w-full bg-slate-800/80 border border-slate-700/60 text-slate-500 rounded-lg px-4 py-2.5 focus:outline-none cursor-not-allowed"
+                           placeholder="your@email.com">
+                </div>
+                <div class="mb-4">
                     <label class="block text-sm font-medium text-slate-300 mb-2">Full Name</label>
                     <input type="text" id="profileName" name="name" required
                            class="w-full bg-slate-800/80 border border-slate-700/60 text-slate-200 rounded-lg px-4 py-2.5 focus:outline-none focus:border-cyan-500/50 transition"
@@ -564,12 +570,14 @@
     <script type="module">
         import apiClient from './js/api-client.js';
         import authManager from './js/auth.js';
+        import toastManager from './js/toast.js';
 
         function openEditProfileModal() {
             const modal = document.getElementById('editProfileModal');
             const user = authManager.getUser();
             if (user) {
                 document.getElementById('profileName').value = user.name;
+                document.getElementById('profileEmail').value = user.email;
             }
             modal.classList.remove('hidden');
         }
@@ -583,29 +591,41 @@
         async function handleProfileUpdate(event) {
             event.preventDefault();
             const form = event.target;
+            const user = authManager.getUser();
             const name = form.name.value;
+            const email = user ? user.email : form.email.value;
             const currentPassword = form.currentPassword.value;
             const newPassword = form.newPassword.value;
 
-            // Validation
             if (newPassword && !currentPassword) {
-                alert('Please enter your current password to change your password');
+                toastManager.error('Validation Error', 'Please enter your current password to change your password');
                 return;
             }
 
             try {
-                const response = await apiClient.updateProfile({ name, currentPassword, newPassword });
-                authManager.setUser(response, response.token);
+                const response = await apiClient.updateProfile({ name, email, currentPassword, newPassword });
+                authManager.setUser(response, response.token || apiClient.getToken());
                 closeEditProfileModal();
-                alert('Profile updated successfully!');
+                toastManager.success('Profile Updated', 'Your profile has been updated successfully');
             } catch (error) {
-                alert('Failed to update profile: ' + error.message);
+                toastManager.error('Update Failed', error.message);
             }
+        }
+
+        function handleLogout() {
+            authManager.logout();
         }
 
         window.openEditProfileModal = openEditProfileModal;
         window.closeEditProfileModal = closeEditProfileModal;
         window.handleProfileUpdate = handleProfileUpdate;
+        window.handleLogout = handleLogout;
+
+        document.getElementById('editProfileModal').addEventListener('click', (e) => {
+            if (e.target.id === 'editProfileModal') {
+                closeEditProfileModal();
+            }
+        });
     </script>
 </body>
 </html>

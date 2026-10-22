@@ -1,8 +1,9 @@
 package com.nexusmart.api.security;
 
+import java.security.Principal;
 import java.util.UUID;
 
-public class UserPrincipal {
+public class UserPrincipal implements Principal {
     private final UUID userId;
     private final String email;
     private final String role;
@@ -23,5 +24,10 @@ public class UserPrincipal {
 
     public String getRole() {
         return role;
+    }
+
+    @Override
+    public String getName() {
+        return email;
     }
 }

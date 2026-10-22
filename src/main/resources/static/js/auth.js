@@ -19,9 +19,10 @@ class AuthManager {
         this.user = null;
         localStorage.removeItem(CONFIG.USER_STORAGE_KEY);
         localStorage.removeItem(CONFIG.TOKEN_STORAGE_KEY);
+        sessionStorage.clear();
         apiClient.clearToken();
         this.updateUI();
-        window.location.href = wasAdmin ? '/admin-login.html' : '/index.html';
+        window.location.replace(wasAdmin ? '/admin-login.html' : '/index.html');
     }
 
     isAuthenticated() {
@@ -63,7 +64,7 @@ class AuthManager {
                     </button>
                     <div class="hidden group-hover:block absolute top-full right-0 mt-2 w-48 bg-slate-800/95 backdrop-blur-xl border border-slate-700/80 rounded-xl shadow-2xl p-2 z-50 divide-y divide-slate-700/40">
                         <div class="py-1">
-                            <button onclick="openEditProfileModal()" class="w-full text-left px-3 py-2 text-xs font-semibold text-slate-200 hover:text-cyan-400 hover:bg-slate-700/50 rounded-lg transition flex items-center gap-2">
+                            <button onclick="window.openEditProfileModal && window.openEditProfileModal()" class="w-full text-left px-3 py-2 text-xs font-semibold text-slate-200 hover:text-cyan-400 hover:bg-slate-700/50 rounded-lg transition flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                                 Edit Profile
                             </button>
@@ -73,7 +74,7 @@ class AuthManager {
                             </a>
                         </div>
                         <div class="py-1">
-                            <button onclick="authManager.logout()" class="w-full text-left px-3 py-2 text-xs font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition flex items-center gap-2">
+                            <button onclick="window.authManager.logout()" class="w-full text-left px-3 py-2 text-xs font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                                 Logout
                             </button>
@@ -91,4 +92,8 @@ class AuthManager {
 }
 
 const authManager = new AuthManager();
+
+// Expose to global window for inline onclick handlers
+window.authManager = authManager;
+
 export default authManager;

@@ -41,10 +41,12 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/error", "/actuator/**", "/h2-console/**").permitAll()
                 .requestMatchers("/login", "/signup", "/products", "/dashboard").permitAll()
-                .requestMatchers("/Nexusmartfront.html", "/index.html", "/login.html", "/register.html", "/admin-login.html", "/admin-register.html", "/cart.html", 
+                .requestMatchers("/Nexusmartfront.html", "/index.html", "/login.html", "/register.html", "/admin-login.html", "/admin-register.html", "/cart.html",
                                  "/checkout.html", "/checkout-success.html", "/account.html", "/admin.html").permitAll()
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/uploads/**").permitAll()
-                .requestMatchers("/api/v1/auth/**", "/api/v1/products/**", "/api/v1/payments/webhook").permitAll()
+                .requestMatchers("/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/google").permitAll()
+                .requestMatchers("/api/v1/products/**", "/api/v1/payments/webhook").permitAll()
+                .requestMatchers("/api/v1/auth/profile").authenticated()
                 .requestMatchers("/api/v1/orders/**", "/api/v1/users/me/**").authenticated()
                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()

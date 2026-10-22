@@ -7,8 +7,6 @@ import com.nexusmart.api.dto.response.AuthResponse;
 import com.nexusmart.api.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -39,7 +37,8 @@ public class AuthController {
     @PutMapping("/profile")
     public ResponseEntity<AuthResponse> updateProfile(
             @Valid @RequestBody ProfileUpdateRequest request,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(authService.updateProfile(request, userDetails.getUsername()));
+            java.security.Principal principal) {
+        String email = principal != null ? principal.getName() : request.getEmail();
+        return ResponseEntity.ok(authService.updateProfile(request, email));
     }
 }
