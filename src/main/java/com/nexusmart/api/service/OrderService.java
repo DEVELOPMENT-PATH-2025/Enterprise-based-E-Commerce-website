@@ -5,15 +5,18 @@ import com.nexusmart.api.dto.response.OrderResponse;
 import com.nexusmart.api.entity.Order;
 import com.nexusmart.api.entity.OrderItem;
 import com.nexusmart.api.entity.Product;
+import com.nexusmart.api.entity.Vendor;
 import com.nexusmart.api.exception.ResourceNotFoundException;
 import com.nexusmart.api.repository.OrderRepository;
 import com.nexusmart.api.repository.ProductRepository;
+import com.nexusmart.api.repository.VendorRepository;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -23,10 +26,12 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
+    private final VendorRepository vendorRepository;
 
-    public OrderService(OrderRepository orderRepository, ProductRepository productRepository) {
+    public OrderService(OrderRepository orderRepository, ProductRepository productRepository, VendorRepository vendorRepository) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
+        this.vendorRepository = vendorRepository;
     }
 
     @Transactional
@@ -51,13 +56,27 @@ public class OrderService {
         for (CheckoutRequest.OrderItemRequest itemRequest : request.getItems()) {
             Product product = productRepository.findById(itemRequest.getProductId())
                     .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
-            
+
             OrderItem orderItem = new OrderItem(
                     order,
                     product.getId(),
                     itemRequest.getQuantity(),
                     product.getPrice()
             );
+
+            // Assign vendor and calculate commission
+            if (product.getVendor() != null) {
+                Vendor vendor = product.getVendor();
+                orderItem.setVendor(vendor);
+
+                BigDecimal itemTotal = product.getPrice().multiply(BigDecimal.valueOf(itemRequest.getQuantity()));
+                BigDecimal commissionRate = vendor.getCommissionRate() != null ? vendor.getCommissionRate() : BigDecimal.valueOf(10.00);
+                BigDecimal platformCommission = itemTotal.multiply(commissionRate).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+                BigDecimal netVendorPayout = itemTotal.subtract(platformCommission);
+
+                orderItem.setVendorPayoutAmount(netVendorPayout);
+            }
+
             order.getItems().add(orderItem);
         }
         

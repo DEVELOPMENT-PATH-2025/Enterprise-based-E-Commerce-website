@@ -12,6 +12,7 @@ public class ProductResponse {
     private Integer stock;
     private String imageUrl;
     private String category;
+    private String vendorName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -87,5 +88,13 @@ public class ProductResponse {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getVendorName() {
+        return vendorName;
+    }
+
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
     }
 }

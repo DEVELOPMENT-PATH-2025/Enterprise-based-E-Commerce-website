@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Become a Seller - NexusMart</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        void: '#050813',
+                        'surface-1': 'rgba(13, 20, 36, 0.7)',
+                        'surface-2': 'rgba(20, 30, 50, 0.8)',
+                        'quantum-cyan': '#00f0ff',
+                        'neon-purple': '#8a2be2',
+                        'matrix-green': '#00ff9f',
+                        'critical-red': '#ff0055',
+                        'warning-amber': '#ffaa00'
+                    },
+                    fontFamily: {
+                        'space': ['Space Grotesk', 'sans-serif'],
+                        'jakarta': ['Plus Jakarta Sans', 'sans-serif'],
+                        'mono': ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="/css/futuristic-theme.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-void via-slate-900 to-void">
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a href="/index.html" class="navbar-brand">
+                <span class="navbar-logo">NEXUSMART</span>
+                <span class="navbar-badge">AI-POWERED</span>
+            </a>
+            <div class="navbar-links">
+                <a href="/index.html" class="navbar-link">Back to Store</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="max-width: 600px; margin-top: 4rem;">
+        <div class="glass-card">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 mb-4">
+                    <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold text-white mb-2 font-space">Become a Seller</h1>
+                <p class="text-slate-400">Start your multi-vendor marketplace journey</p>
+            </div>
+
+            <form id="vendorRegisterForm" onsubmit="handleVendorRegister(event)">
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Store Name</label>
+                    <input type="text" id="storeName" name="storeName" required
+                           class="w-full bg-slate-800/80 border border-slate-700/60 text-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-500/50 transition"
+                           placeholder="e.g., Tech Haven">
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Store Slug</label>
+                    <input type="text" id="storeSlug" name="storeSlug" required
+                           class="w-full bg-slate-800/80 border border-slate-700/60 text-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-500/50 transition"
+                           placeholder="e.g., tech-haven">
+                    <p class="text-xs text-slate-500 mt-1">URL-friendly identifier (lowercase, hyphens only)</p>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Email Address / Gmail</label>
+                    <input type="email" id="businessEmail" name="businessEmail" required
+                           class="w-full bg-slate-800/80 border border-slate-700/60 text-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-500/50 transition"
+                           placeholder="yourname@gmail.com">
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Password</label>
+                    <input type="password" id="password" name="password" required minlength="6"
+                           class="w-full bg-slate-800/80 border border-slate-700/60 text-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-500/50 transition"
+                           placeholder="Create password (min 6 chars)">
+                    <p class="text-xs text-slate-500 mt-1">Minimum 6 characters</p>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6"
+                           class="w-full bg-slate-800/80 border border-slate-700/60 text-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-500/50 transition"
+                           placeholder="Confirm password">
+                </div>
+
+                <div class="mb-6">
+                    <label class="flex items-start gap-3 cursor-pointer">
+                        <input type="checkbox" id="termsAccepted" name="termsAccepted" required
+                               class="mt-1 w-4 h-4 rounded border-slate-600 bg-slate-800 text-cyan-500 focus:ring-cyan-500/50">
+                        <span class="text-sm text-slate-400">
+                            I agree to the <a href="#" class="text-cyan-400 hover:underline">Seller Terms of Service</a> and <a href="#" class="text-cyan-400 hover:underline">Commission Policy</a>
+                        </span>
+                    </label>
+                </div>
+
+                <button type="submit" id="btn-vendor-register"
+                        class="w-full py-3 px-4 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-lg font-bold shadow-lg shadow-cyan-500/20 transition-all duration-150 active:scale-95">
+                    Register as Vendor
+                </button>
+            </form>
+
+            <div class="mt-6 pt-6 border-t border-slate-700/60 text-center">
+                <p class="text-sm text-slate-400">
+                    Already a seller? <a href="/vendor-login.html" class="text-cyan-400 hover:underline">Sign in here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/js/toast.js"></script>
+    <script type="module">
+        import toastManager from './js/toast.js';
+
+        // Auto-prefill email from logged-in user
+        document.addEventListener('DOMContentLoaded', () => {
+            const userStr = localStorage.getItem('nexusmart_user');
+            if (userStr) {
+                try {
+                    const user = JSON.parse(userStr);
+                    if (user.email) {
+                        document.getElementById('businessEmail').value = user.email;
+                    }
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                }
+            }
+
+            // Auto-generate store slug from store name
+            const storeNameInput = document.getElementById('storeName');
+            const storeSlugInput = document.getElementById('storeSlug');
+            
+            storeNameInput.addEventListener('input', (e) => {
+                const storeName = e.target.value;
+                const slug = storeName
+                    .toLowerCase()
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .trim()
+                    .replace(/\s+/g, '-');
+                storeSlugInput.value = slug;
+            });
+
+            lucide.createIcons();
+        });
+
+        async function handleVendorRegister(event) {
+            event.preventDefault();
+            const form = event.target;
+            const storeName = form.storeName.value.trim();
+            const storeSlug = form.storeSlug.value.toLowerCase().replace(/\s+/g, '-');
+            const businessEmail = form.businessEmail.value.trim();
+            const password = form.password.value;
+            const confirmPassword = form.confirmPassword.value;
+
+            // Password validation
+            if (password.length < 6) {
+                toastManager.error('Validation Error', 'Password must be at least 6 characters');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                toastManager.error('Validation Error', 'Passwords do not match');
+                return;
+            }
+
+            const submitBtn = document.getElementById('btn-vendor-register');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Registering...';
+
+            try {
+                const response = await fetch('http://localhost:8080/api/v1/vendor/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        storeName,
+                        storeSlug,
+                        businessEmail,
+                        password
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || 'Failed to register as vendor');
+                }
+
+                const data = await response.json();
+
+                // Save token and user to localStorage
+                localStorage.setItem('nexusmart_token', data.token);
+                localStorage.setItem('nexusmart_user', JSON.stringify(data.user));
+
+                toastManager.success('Seller account created successfully!', 'Redirecting to dashboard...');
+
+                // Immediate redirect to vendor dashboard
+                setTimeout(() => {
+                    window.location.href = '/vendor-dashboard.html';
+                }, 1000);
+            } catch (err) {
+                toastManager.error('Registration Failed', err.message || 'Failed to register as vendor');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Register as Vendor';
+            }
+        }
+
+        window.handleVendorRegister = handleVendorRegister;
+    </script>
+</body>
+</html>

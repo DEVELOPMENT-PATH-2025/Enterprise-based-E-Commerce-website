@@ -25,17 +25,25 @@ public class JwtTokenProvider {
     }
 
     public String generateToken(UUID userId, String email, String role) {
+        return generateToken(userId, email, role, null);
+    }
+
+    public String generateToken(UUID userId, String email, String role, UUID vendorId) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpiration);
 
-        return Jwts.builder()
+        var builder = Jwts.builder()
                 .subject(email)
                 .claim("userId", userId.toString())
                 .claim("role", role)
                 .issuedAt(now)
-                .expiration(expiryDate)
-                .signWith(getSigningKey())
-                .compact();
+                .expiration(expiryDate);
+
+        if (vendorId != null) {
+            builder.claim("vendorId", vendorId.toString());
+        }
+
+        return builder.signWith(getSigningKey()).compact();
     }
 
     public String getEmailFromToken(String token) {
@@ -63,6 +71,16 @@ public class JwtTokenProvider {
                 .parseSignedClaims(token)
                 .getPayload();
         return claims.get("role", String.class);
+    }
+
+    public UUID getVendorIdFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        String vendorIdStr = claims.get("vendorId", String.class);
+        return vendorIdStr != null ? UUID.fromString(vendorIdStr) : null;
     }
 
     public boolean validateToken(String token) {

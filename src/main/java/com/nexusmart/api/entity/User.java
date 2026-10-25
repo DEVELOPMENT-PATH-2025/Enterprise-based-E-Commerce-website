@@ -22,11 +22,15 @@ public class User {
     @Column(nullable = false)
     private String role = "ROLE_CUSTOMER";
 
+    @Column(name = "status", nullable = false, length = 50)
+    private String status = "ACTIVE";
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     public User() {
         this.createdAt = LocalDateTime.now();
+        this.status = "ACTIVE";
     }
 
     public User(String email, String passwordHash, String name, String role) {
@@ -35,6 +39,7 @@ public class User {
         this.name = name;
         this.role = role;
         this.createdAt = LocalDateTime.now();
+        this.status = "ACTIVE";
     }
 
     public UUID getId() {
@@ -75,6 +80,14 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public LocalDateTime getCreatedAt() {

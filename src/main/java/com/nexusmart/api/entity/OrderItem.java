@@ -24,6 +24,16 @@ public class OrderItem {
     @Column(nullable = false)
     private Integer quantity;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vendor_id")
+    private Vendor vendor;
+
+    @Column(name = "fulfillment_status")
+    private String fulfillmentStatus = "PENDING";
+
+    @Column(name = "vendor_payout_amount", precision = 10, scale = 2)
+    private BigDecimal vendorPayoutAmount;
+
     public OrderItem() {}
 
     public OrderItem(Order order, UUID productId, Integer quantity, BigDecimal priceSnapshot) {
@@ -71,5 +81,29 @@ public class OrderItem {
 
     public void setPriceSnapshot(BigDecimal priceSnapshot) {
         this.priceSnapshot = priceSnapshot;
+    }
+
+    public Vendor getVendor() {
+        return vendor;
+    }
+
+    public void setVendor(Vendor vendor) {
+        this.vendor = vendor;
+    }
+
+    public String getFulfillmentStatus() {
+        return fulfillmentStatus;
+    }
+
+    public void setFulfillmentStatus(String fulfillmentStatus) {
+        this.fulfillmentStatus = fulfillmentStatus;
+    }
+
+    public BigDecimal getVendorPayoutAmount() {
+        return vendorPayoutAmount;
+    }
+
+    public void setVendorPayoutAmount(BigDecimal vendorPayoutAmount) {
+        this.vendorPayoutAmount = vendorPayoutAmount;
     }
 }

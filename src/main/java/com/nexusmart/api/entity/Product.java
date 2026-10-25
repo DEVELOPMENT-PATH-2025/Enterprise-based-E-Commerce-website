@@ -29,6 +29,13 @@ public class Product {
 
     private String category;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vendor_id")
+    private Vendor vendor;
+
+    @Column(name = "approval_status")
+    private String approvalStatus = "ACTIVE";
+
     // private String vectorEmbedding; // Disabled: requires pgvector extension
 
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -112,6 +119,22 @@ public class Product {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public Vendor getVendor() {
+        return vendor;
+    }
+
+    public void setVendor(Vendor vendor) {
+        this.vendor = vendor;
+    }
+
+    public String getApprovalStatus() {
+        return approvalStatus;
+    }
+
+    public void setApprovalStatus(String approvalStatus) {
+        this.approvalStatus = approvalStatus;
     }
 
     // public String getVectorEmbedding() {

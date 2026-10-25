@@ -38,16 +38,16 @@
     <nav class="navbar navbar-default">
         <div class="container navbar-content">
             <a href="/Nexusmartfront.html" class="navbar-brand">
-                <span class="navbar-logo">NEXUS MART</span>
+                <span class="navbar-logo">NEXUSMART</span>
+                <span class="navbar-badge navbar-badge-cyan" style="animation: pulse 2s infinite;">[ AI-POWERED MARKETPLACE ]</span>
             </a>
             <div class="navbar-links">
-                <a href="/Nexusmartfront.html" class="nav-link">Home</a>
+                <a href="/index.html" class="nav-link">Storefront</a>
                 <a href="#features" class="nav-link">Features</a>
-                <a href="#catalog" class="nav-link">Catalog</a>
-                <a href="/index.html" class="cyber-button">
-                    <i data-lucide="shopping-bag" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 0.5rem;"></i>
-                    Shop Now
-                </a>
+                <a href="/vendor-register.html" class="nav-link">Sell with Us</a>
+                <div id="authContainer" class="flex items-center gap-3">
+                    <!-- Dynamic auth buttons will be injected here -->
+                </div>
             </div>
         </div>
     </nav>
@@ -66,19 +66,33 @@
                         Discover a revolutionary shopping experience with smart features, real-time inventory, and seamless checkout. Shop smarter, not harder.
                     </p>
                     <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                        <a href="/index.html" class="cyber-button" style="background: white; color: var(--void);">
+                        <a href="/index.html" class="cyber-button" style="background: linear-gradient(135deg, var(--quantum-cyan), #00b8d4);">
                             <i data-lucide="shopping-bag" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 0.5rem;"></i>
-                            Shop Now
+                            Explore Storefront →
                         </a>
-                        <a href="#features" class="cyber-button-secondary" style="border-color: white; color: white;">
-                            <i data-lucide="play-circle" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 0.5rem;"></i>
-                            Learn More
+                        <a href="/vendor-register.html" class="cyber-button-secondary" style="border-color: var(--quantum-cyan); color: var(--quantum-cyan);">
+                            <i data-lucide="store" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 0.5rem;"></i>
+                            Become a Seller 🏪
                         </a>
                     </div>
                 </div>
                 <div style="text-align: center;">
-                    <div style="font-size: 12rem; opacity: 0.2; color: white;">
-                        <i data-lucide="shopping-cart" style="width: 200px; height: 200px;"></i>
+                    <div class="glass-card" style="padding: 2rem; background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(138, 43, 226, 0.1)); backdrop-filter: blur(20px); border: 1px solid rgba(0, 240, 255, 0.3); box-shadow: 0 0 40px rgba(0, 240, 255, 0.2);">
+                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--quantum-cyan); margin-bottom: 1rem;">
+                            <i data-lucide="cpu" style="width: 16px; height: 16px; display: inline; vertical-align: middle; margin-right: 0.5rem;"></i>
+                            1536-Dim AI Search Active
+                        </div>
+                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--matrix-green); margin-bottom: 1rem;">
+                            <i data-lucide="package" style="width: 16px; height: 16px; display: inline; vertical-align: middle; margin-right: 0.5rem;"></i>
+                            Multi-Vendor Fulfillment
+                        </div>
+                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--neon-purple); margin-bottom: 1rem;">
+                            <i data-lucide="lock" style="width: 16px; height: 16px; display: inline; vertical-align: middle; margin-right: 0.5rem;"></i>
+                            Zero-PCI Encrypted
+                        </div>
+                        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                            <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">System Status: ONLINE</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -92,37 +106,62 @@
         </div>
         
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
-            <div class="glass-card">
+            <div class="glass-card" style="transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
                 <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--quantum-cyan), var(--neon-purple)); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);">
-                    <i data-lucide="search" style="width: 40px; height: 40px; color: white;"></i>
+                    <i data-lucide="brain-circuit" style="width: 40px; height: 40px; color: white;"></i>
                 </div>
-                <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--text-primary);">Smart Search</h3>
-                <p style="color: var(--text-secondary); line-height: 1.6;">Advanced filtering by category, price range, ratings, and more. Find exactly what you need in seconds.</p>
+                <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--text-primary);">Spring AI Semantic Search</h3>
+                <p style="color: var(--text-secondary); line-height: 1.6;">Natural-language product discovery powered by dense vector embeddings in PostgreSQL PGVector.</p>
             </div>
             
-            <div class="glass-card">
+            <div class="glass-card" style="transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
                 <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--matrix-green), #00cc7a); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; box-shadow: 0 0 20px rgba(0, 255, 159, 0.3);">
-                    <i data-lucide="zap" style="width: 40px; height: 40px; color: white;"></i>
+                    <i data-lucide="store-2" style="width: 40px; height: 40px; color: white;"></i>
                 </div>
-                <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--text-primary);">Instant Checkout</h3>
-                <p style="color: var(--text-secondary); line-height: 1.6;">Real-time inventory updates ensure lightning-fast checkout. Never face out-of-stock surprises.</p>
+                <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--text-primary);">Multi-Vendor Marketplace</h3>
+                <p style="color: var(--text-secondary); line-height: 1.6;">Verified independent sellers with dedicated merchant command centers and real-time inventory tracking.</p>
             </div>
             
-            <div class="glass-card">
+            <div class="glass-card" style="transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
                 <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--neon-purple), #a855f7); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; box-shadow: 0 0 20px rgba(138, 43, 226, 0.3);">
-                    <i data-lucide="star" style="width: 40px; height: 40px; color: white;"></i>
+                    <i data-lucide="shield-check" style="width: 40px; height: 40px; color: white;"></i>
                 </div>
-                <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--text-primary);">Review System</h3>
-                <p style="color: var(--text-secondary); line-height: 1.6;">Make informed decisions with authentic customer reviews and detailed product ratings.</p>
+                <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--text-primary);">Concurrency-Safe Stock</h3>
+                <p style="color: var(--text-secondary); line-height: 1.6;">Zero overselling during flash purchases guaranteed by database row-level pessimistic locks.</p>
             </div>
             
-            <div class="glass-card">
+            <div class="glass-card" style="transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
                 <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--warning-amber), #ff8800); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; box-shadow: 0 0 20px rgba(255, 170, 0, 0.3);">
-                    <i data-lucide="image" style="width: 40px; height: 40px; color: white;"></i>
+                    <i data-lucide="credit-card" style="width: 40px; height: 40px; color: white;"></i>
                 </div>
-                <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--text-primary);">HD Gallery</h3>
-                <p style="color: var(--text-secondary); line-height: 1.6;">High-resolution images with dynamic stock indicators. See every detail before you buy.</p>
+                <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--text-primary);">Encrypted One-Click Checkout</h3>
+                <p style="color: var(--text-secondary); line-height: 1.6;">Direct and Stripe-backed payment execution with complete zero-cardholder liability.</p>
             </div>
+        </div>
+    </section>
+
+    <!-- Sell on NexusMart Vendor Onboarding Banner -->
+    <section class="max-w-6xl mx-auto px-4 py-16">
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-cyan-500/30 p-8 sm:p-12 shadow-2xl">
+            <div class="max-w-2xl relative z-10">
+                <span class="inline-block px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold uppercase tracking-wider mb-4">Merchant Onboarding</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-4">
+                    Launch Your Store on <span class="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">NexusMart</span>
+                </h2>
+                <p class="text-slate-300 text-sm sm:text-base mb-6 leading-relaxed">
+                    Connect with thousands of smart shoppers. Enjoy instant AI catalog indexing, automated shipping fulfillment queues, transparent 10% platform fees, and real-time net payout analytics.
+                </p>
+                <div class="flex flex-wrap items-center gap-4">
+                    <a href="/vendor-register.html" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-sm rounded-xl shadow-lg shadow-cyan-500/25 transition active:scale-95">
+                        Register as a Vendor →
+                    </a>
+                    <a href="/login.html" class="px-5 py-3 text-slate-300 hover:text-white text-sm font-semibold border border-slate-700 hover:border-slate-500 rounded-xl transition">
+                        Vendor Sign In
+                    </a>
+                </div>
+            </div>
+            <!-- Decorative Ambient Glow -->
+            <div class="absolute -right-10 -bottom-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
         </div>
     </section>
 
@@ -314,6 +353,68 @@
         </div>
     </footer>
 
+    <script type="module" src="/js/config.js"></script>
+    <script type="module" src="/js/auth.js"></script>
+    <script type="module">
+        import authManager from './js/auth.js';
+
+        // Dynamic auth buttons based on user role
+        function updateAuthButtons() {
+            const authContainer = document.getElementById('authContainer');
+            
+            if (!authManager.isAuthenticated()) {
+                // Guest state
+                authContainer.innerHTML = `
+                    <a href="/login.html" class="nav-link">Sign In</a>
+                    <a href="/index.html" class="cyber-button" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                        Shop Catalog →
+                    </a>
+                `;
+            } else {
+                const user = authManager.getUser();
+                const roles = user.roles || [];
+                
+                if (roles.includes('ROLE_ADMIN')) {
+                    // Admin state
+                    authContainer.innerHTML = `
+                        <a href="/admin.html" class="cyber-button" style="background: linear-gradient(135deg, gold, #ffaa00); color: #050813; padding: 0.5rem 1rem; font-size: 0.9rem;">
+                            Mission Control →
+                        </a>
+                    `;
+                } else if (roles.includes('ROLE_VENDOR')) {
+                    // Vendor state
+                    authContainer.innerHTML = `
+                        <a href="/vendor-dashboard.html" class="cyber-button" style="background: linear-gradient(135deg, var(--matrix-green), #00cc7a); padding: 0.5rem 1rem; font-size: 0.9rem;">
+                            Merchant Portal →
+                        </a>
+                    `;
+                } else {
+                    // Customer state
+                    authContainer.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-right: 0.5rem;">
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--quantum-cyan), var(--neon-purple)); display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; font-size: 0.8rem;">
+                                ${user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                            </div>
+                            <span style="color: var(--text-secondary); font-size: 0.9rem;">${user.name.split(' ')[0]}</span>
+                        </div>
+                        <a href="/index.html" class="cyber-button" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                            Open Storefront
+                        </a>
+                    `;
+                }
+            }
+        }
+
+        // Initial load
+        updateAuthButtons();
+        
+        // Update on auth changes
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'nexusmart_token') {
+                updateAuthButtons();
+            }
+        });
+    </script>
     <script>
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {

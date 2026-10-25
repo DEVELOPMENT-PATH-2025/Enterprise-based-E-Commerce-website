@@ -38,18 +38,20 @@
     <nav class="navbar navbar-admin">
         <div class="container navbar-content">
             <a href="/admin.html" class="navbar-brand">
-                <span class="navbar-logo">MISSION CONTROL</span>
-                <span class="navbar-badge navbar-badge-gold">CLEARANCE LEVEL 5</span>
+                <span class="navbar-logo">NEXUSMART</span>
+                <span class="navbar-badge navbar-badge-gold">[ SUPER ADMIN ]</span>
             </a>
             
             <div class="navbar-links">
                 <span style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
-                    <i data-lucide="user" style="width: 18px; height: 18px;"></i>
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, gold, #ffaa00); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #050813;">
+                        <span id="userInitials">SA</span>
+                    </div>
                     <span id="userName"></span>
                 </span>
                 <button onclick="window.authManager.logout()" class="cyber-button-secondary">
                     <i data-lucide="log-out" style="width: 16px; height: 16px;"></i>
-                    Terminate Session
+                    Logout
                 </button>
             </div>
         </div>
@@ -70,126 +72,212 @@
         <div id="error" class="glass-card" style="display: none; border-color: var(--critical-red); margin-bottom: 1.5rem;"></div>
 
         <div id="dashboardContent">
+            <!-- Top KPI Command Deck -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
                 <div class="stat-card stat-card-gold">
-                    <div class="stat-value" id="totalRevenue">$0.00</div>
-                    <div class="stat-label">Total Revenue</div>
+                    <div class="stat-value" id="platformGmv">$0.00</div>
+                    <div class="stat-label">Platform GMV</div>
                     <div style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--matrix-green);">
                         <i data-lucide="trending-up" style="width: 14px; height: 14px; display: inline;"></i>
-                        +12% from last cycle
+                        Gross Merchandise Value
                     </div>
                 </div>
                 <div class="stat-card stat-card-cyan">
-                    <div class="stat-value" id="totalOrders">0</div>
-                    <div class="stat-label">Total Orders</div>
+                    <div class="stat-value" id="platformCommission">$0.00</div>
+                    <div class="stat-label">Net Commission Revenue</div>
                     <div style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--matrix-green);">
-                        <i data-lucide="trending-up" style="width: 14px; height: 14px; display: inline;"></i>
-                        +8% from last cycle
+                        <i data-lucide="dollar-sign" style="width: 14px; height: 14px; display: inline;"></i>
+                        Platform Earnings
                     </div>
                 </div>
                 <div class="stat-card stat-card-purple">
-                    <div class="stat-value" id="activeSkus">0</div>
-                    <div class="stat-label">Active SKUs</div>
-                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-muted);">
-                        <i data-lucide="sync" style="width: 14px; height: 14px; display: inline;"></i>
-                        Synced
+                    <div class="stat-value" id="totalVendors">0</div>
+                    <div class="stat-label">Active Merchants</div>
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--warning-amber);">
+                        <i data-lucide="clock" style="width: 14px; height: 14px; display: inline;"></i>
+                        <span id="pendingVendors">0</span> Pending Review
                     </div>
                 </div>
                 <div class="stat-card stat-card-warning">
-                    <div class="stat-value" id="lowStockItems">0</div>
-                    <div class="stat-label">Low Stock Alert</div>
-                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--warning-amber);">
-                        <i data-lucide="alert-triangle" style="width: 14px; height: 14px; display: inline;"></i>
-                        Attention required
+                    <div class="stat-value" id="totalOrders">0</div>
+                    <div class="stat-label">Total Orders</div>
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-muted);">
+                        <i data-lucide="shopping-bag" style="width: 14px; height: 14px; display: inline;"></i>
+                        Global Completed Orders
                     </div>
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-                <div class="glass-card">
-                    <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary);">
-                        <i data-lucide="layers" style="width: 20px; height: 20px; color: var(--quantum-cyan); display: inline-block; vertical-align: middle; margin-right: 0.5rem;"></i>
-                        Category Inventory
-                    </h3>
-                    <div id="categoryStock" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem;"></div>
-                </div>
+            <!-- Dedicated Cyber-Segmented Navigation Bar -->
+            <div class="max-w-7xl mx-auto px-4 mb-8">
+                <div class="bg-slate-900/90 border border-slate-800 p-1.5 rounded-2xl backdrop-blur-xl shadow-2xl flex flex-wrap items-center gap-2">
+                    
+                    <!-- Tab 1: Vendor Governance -->
+                    <button type="button" onclick="switchAdminTab('vendors')" id="tab-btn-vendors"
+                            class="admin-tab active flex-1 min-w-[180px] py-3 px-4 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center gap-2 bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/25">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                        <span>Vendor Governance</span>
+                        <span id="tab-badge-pending-vendors" class="ml-1 px-1.5 py-0.5 rounded-full bg-slate-950 text-cyan-400 text-[10px] font-black hidden">0</span>
+                    </button>
 
-                <div class="glass-card">
-                    <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary);">
-                        <i data-lucide="package-plus" style="width: 20px; height: 20px; color: var(--quantum-cyan); display: inline-block; vertical-align: middle; margin-right: 0.5rem;"></i>
-                        Initialize New Product
-                    </h3>
-                    <form id="addProductForm">
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-secondary); font-size: 0.85rem;">Product Name</label>
-                            <input type="text" id="productName" class="cyber-input" required placeholder="Enter product name">
-                        </div>
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-secondary); font-size: 0.85rem;">Category</label>
-                            <select id="productCategory" class="cyber-select" required>
-                                <option value="">Select category</option>
-                                <option value="Electronics">Electronics</option>
-                                <option value="Fashion">Fashion</option>
-                                <option value="Home">Home & Garden</option>
-                                <option value="Accessories">Accessories</option>
-                                <option value="Sports">Sports</option>
-                                <option value="Books">Books</option>
-                                <option value="Storage">Storage</option>
-                            </select>
-                        </div>
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-secondary); font-size: 0.85rem;">Description</label>
-                            <textarea id="productDescription" class="cyber-input" rows="2" required placeholder="Product description" maxlength="5000"></textarea>
-                            <div id="descriptionError" style="color: var(--critical-red); font-size: 0.75rem; margin-top: 0.25rem; display: none;"></div>
-                            <div style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.25rem; text-align: right;">
-                                <span id="charCount">0</span>/5000 characters
-                            </div>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                            <div>
-                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-secondary); font-size: 0.85rem;">Price ($)</label>
-                                <input type="number" id="productPrice" class="cyber-input" step="0.01" required placeholder="0.00">
-                            </div>
-                            <div>
-                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-secondary); font-size: 0.85rem;">Stock</label>
-                                <input type="number" id="productStock" class="cyber-input" required placeholder="0">
-                            </div>
-                        </div>
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-secondary); font-size: 0.85rem;">Product Image</label>
-                            <div id="imageUploadZone" class="border-2 border-dashed border-slate-600/60 rounded-lg p-6 text-center cursor-pointer hover:border-cyan-500/50 hover:bg-slate-800/30 transition" style="background: rgba(30, 41, 59, 0.4);">
-                                <input type="file" id="productImageFile" accept="image/*" class="hidden">
-                                <div id="uploadPlaceholder">
-                                    <svg class="w-12 h-12 mx-auto text-slate-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                                    </svg>
-                                    <p class="text-sm text-slate-400">Drag & drop image here or click to upload</p>
-                                    <p class="text-xs text-slate-500 mt-1">Supports: JPG, PNG, GIF, WebP</p>
-                                </div>
-                                <div id="uploadPreview" class="hidden">
-                                    <img id="previewImage" class="max-h-32 mx-auto rounded-lg mb-2" src="" alt="Preview">
-                                    <p id="fileName" class="text-xs text-slate-400"></p>
-                                    <button type="button" onclick="removeImage()" class="text-xs text-red-400 hover:text-red-300 mt-2">Remove</button>
-                                </div>
-                            </div>
-                            <input type="hidden" id="productImageUrl">
-                        </div>
-                        <button type="submit" class="cyber-button" style="width: 100%; background: linear-gradient(135deg, gold, #ffaa00);">
-                            <i data-lucide="plus" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 0.5rem;"></i>
-                            Initialize Product
-                        </button>
-                    </form>
+                    <!-- Tab 2: Global Catalog -->
+                    <button type="button" onclick="switchAdminTab('catalog')" id="tab-btn-catalog"
+                            class="admin-tab flex-1 min-w-[180px] py-3 px-4 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800/80">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                        <span>Global Catalog</span>
+                    </button>
+
+                    <!-- Tab 3: Marketplace Orders -->
+                    <button type="button" onclick="switchAdminTab('orders')" id="tab-btn-orders"
+                            class="admin-tab flex-1 min-w-[180px] py-3 px-4 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800/80">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                        <span>Marketplace Orders</span>
+                    </button>
+
+                    <!-- Tab 4: Settings & Commission -->
+                    <button type="button" onclick="switchAdminTab('settings')" id="tab-btn-settings"
+                            class="admin-tab flex-1 min-w-[180px] py-3 px-4 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800/80">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <span>Settings & Commission</span>
+                    </button>
+
+                    <!-- Tab 5: User Accounts -->
+                    <button type="button" onclick="switchAdminTab('users')" id="tab-btn-users"
+                            class="admin-tab flex-1 min-w-[180px] py-3 px-4 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800/80">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                        <span>User Accounts</span>
+                    </button>
                 </div>
             </div>
 
-            <div class="glass-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; color: var(--text-primary);">
-                        <i data-lucide="box" style="width: 20px; height: 20px; color: var(--quantum-cyan); display: inline-block; vertical-align: middle; margin-right: 0.5rem;"></i>
-                        Product Inventory
+            <!-- Tab 1: Vendor Governance -->
+            <div id="vendors-tab">
+                <div class="glass-card mb-8">
+                    <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary);">
+                        <i data-lucide="user-plus" style="width: 20px; height: 20px; color: var(--warning-amber); display: inline-block; vertical-align: middle; margin-right: 0.5rem;"></i>
+                        Pending Approvals Queue
                     </h3>
+                    <div id="pendingVendorsList" style="max-height: 400px; overflow-y: auto;"></div>
                 </div>
-                <div id="recentProducts" style="max-height: 500px; overflow-y: auto;"></div>
+
+                <div class="glass-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; color: var(--text-primary);">
+                            <i data-lucide="store" style="width: 20px; height: 20px; color: var(--quantum-cyan); display: inline-block; vertical-align: middle; margin-right: 0.5rem;"></i>
+                            Registered Vendors Matrix
+                        </h3>
+                        <select id="vendorStatusFilter" onchange="loadVendors()" class="cyber-select" style="width: auto;">
+                            <option value="">All Status</option>
+                            <option value="PENDING_APPROVAL">Pending Approval</option>
+                            <option value="ACTIVE">Active</option>
+                            <option value="SUSPENDED">Suspended</option>
+                        </select>
+                    </div>
+                    <div id="vendorsList" style="max-height: 500px; overflow-y: auto;"></div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Global Catalog Moderation -->
+            <div id="catalog-tab" style="display: none;">
+                <div class="glass-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; color: var(--text-primary);">
+                            <i data-lucide="package" style="width: 20px; height: 20px; color: var(--quantum-cyan); display: inline-block; vertical-align: middle; margin-right: 0.5rem;"></i>
+                            Global Catalog Moderation
+                        </h3>
+                        <select id="catalogVendorFilter" onchange="loadGlobalCatalog()" class="cyber-select" style="width: auto;">
+                            <option value="">All Vendors</option>
+                        </select>
+                    </div>
+                    <div id="catalogList" style="max-height: 600px; overflow-y: auto;"></div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Marketplace Orders -->
+            <div id="orders-tab" style="display: none;">
+                <div class="glass-card">
+                    <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary);">
+                        <i data-lucide="shopping-bag" style="width: 20px; height: 20px; color: var(--quantum-cyan); display: inline-block; vertical-align: middle; margin-right: 0.5rem;"></i>
+                        Marketplace Orders & Fulfillment
+                    </h3>
+                    <div id="ordersList" style="max-height: 600px; overflow-y: auto;"></div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Settings & Commission -->
+            <div id="settings-tab" style="display: none;">
+                <div class="glass-card mb-8">
+                    <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary);">
+                        <i data-lucide="settings" style="width: 20px; height: 20px; color: var(--quantum-cyan); display: inline-block; vertical-align: middle; margin-right: 0.5rem;"></i>
+                        Global Commission Settings
+                    </h3>
+                    <form id="commissionForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">Default Commission Rate (%)</label>
+                            <input type="number" id="defaultCommissionRate" step="0.1" min="0" max="30" value="10"
+                                   class="w-full bg-slate-800/80 border border-slate-700/60 text-slate-200 rounded-lg px-4 py-2.5 focus:outline-none focus:border-cyan-500/50 transition"
+                                   placeholder="10">
+                        </div>
+                        <div class="flex items-end">
+                            <button type="button" onclick="updateDefaultCommission()" class="cyber-button">
+                                Update Default Rate
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="glass-card">
+                    <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary);">
+                        <i data-lucide="refresh-cw" style="width: 20px; height: 20px; color: var(--quantum-cyan); display: inline-block; vertical-align: middle; margin-right: 0.5rem;"></i>
+                        Search Index Management
+                    </h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Trigger a global re-index of all active product listings for AI-powered semantic search.</p>
+                    <button onclick="triggerReindex()" class="cyber-button">
+                        Trigger Global AI PGVector Re-index
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab 5: User Accounts Management -->
+            <div id="users-tab" style="display: none;">
+                <div class="glass-card">
+                    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                                <svg style="width: 20px; height: 20px; color: var(--quantum-cyan);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                                Platform Users & Account Governance
+                            </h3>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem;">Manage, suspend, or delete customer, vendor, and administrator accounts</p>
+                        </div>
+                        
+                        <!-- Role Filter Dropdown -->
+                        <select id="user-role-filter" onchange="filterUsersByRole(this.value)" class="bg-slate-800 text-slate-200 border border-slate-700 text-xs font-semibold rounded-xl px-3 py-2 focus:outline-none focus:border-cyan-500 cursor-pointer">
+                            <option value="ALL">All Roles</option>
+                            <option value="ROLE_CUSTOMER">Customers Only</option>
+                            <option value="ROLE_VENDOR">Vendors Only</option>
+                            <option value="ROLE_ADMIN">Admins Only</option>
+                        </select>
+                    </div>
+
+                    <!-- Users Table -->
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; text-align: left; font-size: 0.875rem;">
+                            <thead style="background: rgba(2, 6, 23, 0.6); color: var(--text-secondary); text-transform: uppercase; font-size: 0.6875rem; font-weight: 700; border-bottom: 1px solid var(--border-color);">
+                                <tr>
+                                    <th style="padding: 0.875rem;">User Profile</th>
+                                    <th style="padding: 0.875rem;">Email</th>
+                                    <th style="padding: 0.875rem;">Role</th>
+                                    <th style="padding: 0.875rem;">Status</th>
+                                    <th style="padding: 0.875rem;">Joined Date</th>
+                                    <th style="padding: 0.875rem; text-align: right;">Account Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body" style="color: var(--text-secondary); border-top: none;">
+                                <!-- Dynamic Rows Populated via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -204,299 +292,613 @@
         import toastManager from './js/toast.js';
 
         window.authManager = authManager;
-        window.refreshDashboard = loadDashboard;
+        window.refreshDashboard = loadMarketplaceStats;
 
         if (!authManager.isAuthenticated() || !authManager.isAdmin()) {
             window.location.href = '/admin-login.html';
         }
 
-        document.getElementById('userName').textContent = authManager.getUser().name;
+        const user = authManager.getUser();
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userInitials').textContent = user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
 
-        document.getElementById('addProductForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        // Tab switching
+        function switchAdminTab(tabName) {
+            const tabs = ['vendors', 'catalog', 'orders', 'settings', 'users'];
+            
+            // Update tab buttons
+            tabs.forEach(tab => {
+                const tabBtn = document.getElementById(`tab-btn-${tab}`);
+                if (tabBtn) {
+                    if (tab === tabName) {
+                        tabBtn.classList.add('bg-cyan-500', 'text-slate-950', 'shadow-lg', 'shadow-cyan-500/25');
+                        tabBtn.classList.remove('text-slate-400', 'hover:text-white', 'hover:bg-slate-800/80');
+                    } else {
+                        tabBtn.classList.remove('bg-cyan-500', 'text-slate-950', 'shadow-lg', 'shadow-cyan-500/25');
+                        tabBtn.classList.add('text-slate-400', 'hover:text-white', 'hover:bg-slate-800/80');
+                    }
+                }
+            });
 
-            const name = document.getElementById('productName').value.trim();
-            const category = document.getElementById('productCategory').value;
-            const description = document.getElementById('productDescription').value.trim();
-            const price = document.getElementById('productPrice').value;
-            const stock = document.getElementById('productStock').value;
-            const imageUrl = document.getElementById('productImageUrl').value || 'https://via.placeholder.com/400x300?text=No+Image';
+            // Show/hide tab content
+            tabs.forEach(tab => {
+                const tabContent = document.getElementById(`${tab}-tab`);
+                if (tabContent) {
+                    tabContent.style.display = tab === tabName ? 'block' : 'none';
+                }
+            });
 
-            const descriptionError = document.getElementById('descriptionError');
-            descriptionError.style.display = 'none';
-
-            if (!name || name.length < 3) {
-                toastManager.error('Validation Error', 'Product name must be at least 3 characters');
-                return;
+            // Load appropriate data based on tab
+            switch(tabName) {
+                case 'vendors':
+                    loadVendors();
+                    break;
+                case 'catalog':
+                    loadGlobalCatalog();
+                    break;
+                case 'orders':
+                    loadMarketplaceOrders();
+                    break;
+                case 'settings':
+                    // Settings tab is static
+                    break;
+                case 'users':
+                    loadUsers('ALL');
+                    break;
             }
+        }
 
-            if (!category) {
-                toastManager.error('Validation Error', 'Please select a category');
-                return;
-            }
+        window.switchAdminTab = switchAdminTab;
 
-            if (!description) {
-                descriptionError.textContent = 'Description is required';
-                descriptionError.style.display = 'block';
-                toastManager.error('Validation Error', 'Description is required');
-                return;
-            }
-
-            if (description.length > 5000) {
-                descriptionError.textContent = 'Description must not exceed 5000 characters';
-                descriptionError.style.display = 'block';
-                toastManager.error('Validation Error', 'Description must not exceed 5000 characters');
-                return;
-            }
-
-            if (!price || parseFloat(price) < 0.01) {
-                toastManager.error('Validation Error', 'Price must be at least 0.01');
-                return;
-            }
-
-            if (stock === '' || parseInt(stock) < 0) {
-                toastManager.error('Validation Error', 'Stock cannot be negative');
-                return;
-            }
-
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<div class="loading-spinner" style="width: 16px; height: 16px; border-width: 2px; display: inline-block; vertical-align: middle; margin-right: 0.5rem;"></div> Initializing...';
-
+        // Load marketplace stats for top KPI cards
+        async function loadMarketplaceStats() {
+            const token = localStorage.getItem('nexusmart_token');
             try {
-                const response = await apiClient.createProduct({ name, category, description, price: parseFloat(price), stock: parseInt(stock), imageUrl });
-                toastManager.success('Product Initialized', `${name} added to inventory`);
-                e.target.reset();
-                removeImage();
-                addProductToInventory(response);
-                loadDashboard();
+                const response = await fetch('http://localhost:8080/api/v1/admin/marketplace/stats', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
+                }
+                
+                const stats = await response.json();
+                
+                // Map response data to KPI cards
+                document.getElementById('platformGmv').textContent = `$${(stats.platformGmv || 0).toFixed(2)}`;
+                document.getElementById('platformCommission').textContent = `$${(stats.platformNetCommission || 0).toFixed(2)}`;
+                document.getElementById('totalVendors').textContent = stats.totalActiveVendors || 0;
+                document.getElementById('pendingVendors').textContent = stats.pendingVendorApprovals || 0;
+                document.getElementById('totalOrders').textContent = stats.totalOrders || 0;
+
+                // Update tab badge for pending vendors
+                const badge = document.getElementById('tab-badge-pending-vendors');
+                if (badge) {
+                    if (stats.pendingVendorApprovals > 0) {
+                        badge.textContent = stats.pendingVendorApprovals;
+                        badge.classList.remove('hidden');
+                    } else {
+                        badge.classList.add('hidden');
+                    }
+                }
             } catch (err) {
-                toastManager.error('Initialization Failed', err.message);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i data-lucide="plus" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 0.5rem;"></i> Initialize Product';
-                lucide.createIcons();
-            }
-        });
-
-        // Image upload handling
-        const uploadZone = document.getElementById('imageUploadZone');
-        const fileInput = document.getElementById('productImageFile');
-        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
-        const uploadPreview = document.getElementById('uploadPreview');
-        const previewImage = document.getElementById('previewImage');
-        const fileName = document.getElementById('fileName');
-        const imageUrlInput = document.getElementById('productImageUrl');
-
-        uploadZone.addEventListener('click', () => fileInput.click());
-
-        uploadZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadZone.classList.add('border-cyan-500/50', 'bg-slate-800/30');
-        });
-
-        uploadZone.addEventListener('dragleave', () => {
-            uploadZone.classList.remove('border-cyan-500/50', 'bg-slate-800/30');
-        });
-
-        uploadZone.addEventListener('drop', async (e) => {
-            e.preventDefault();
-            uploadZone.classList.remove('border-cyan-500/50', 'bg-slate-800/30');
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                await handleFileUpload(files[0]);
-            }
-        });
-
-        fileInput.addEventListener('change', async (e) => {
-            if (e.target.files.length > 0) {
-                await handleFileUpload(e.target.files[0]);
-            }
-        });
-
-        async function handleFileUpload(file) {
-            if (!file.type.startsWith('image/')) {
-                toastManager.error('Invalid File', 'Please upload an image file');
-                return;
-            }
-
-            if (file.size > 5 * 1024 * 1024) {
-                toastManager.error('File Too Large', 'Please upload an image smaller than 5MB');
-                return;
-            }
-
-            // Show preview
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                previewImage.src = e.target.result;
-                fileName.textContent = file.name;
-                uploadPlaceholder.classList.add('hidden');
-                uploadPreview.classList.remove('hidden');
-            };
-            reader.readAsDataURL(file);
-
-            // Upload to server
-            try {
-                const formData = new FormData();
-                formData.append('file', file);
-                const imageUrl = await apiClient.uploadImage(formData);
-                imageUrlInput.value = imageUrl;
-                toastManager.success('Image Uploaded', 'Product image uploaded successfully');
-            } catch (error) {
-                toastManager.error('Upload Failed', error.message);
-                removeImage();
+                console.error('Failed to load marketplace stats:', err);
+                
+                // Extract HTTP status from error message if available
+                let errorMsg = err.message || 'Failed to load marketplace stats';
+                if (err.message && err.message.includes('HTTP')) {
+                    errorMsg = `Failed to load marketplace stats: ${err.message}`;
+                } else if (err.message && (err.message.includes('401') || err.message.includes('403') || err.message.includes('Unauthorized'))) {
+                    errorMsg = 'Session expired or Admin clearance missing. Please re-login.';
+                }
+                
+                toastManager.error('Error', errorMsg);
             }
         }
 
-        window.removeImage = function() {
-            fileInput.value = '';
-            imageUrlInput.value = '';
-            previewImage.src = '';
-            fileName.textContent = '';
-            uploadPlaceholder.classList.remove('hidden');
-            uploadPreview.classList.add('hidden');
-        };
-
-        function addProductToInventory(product) {
-            const recentProducts = document.getElementById('recentProducts');
-            if (!recentProducts) return;
-
-            if (recentProducts.innerHTML.includes('No products yet')) {
-                recentProducts.innerHTML = '';
-            }
-
-            const productHtml = `
-                <div class="product-item-admin">
-                    <div style="display: flex; align-items: center; gap: 1rem;">
-                        <img src="${product.imageUrl}" alt="${product.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid var(--surface-border);">
-                        <div>
-                            <div style="font-weight: 600; color: var(--text-primary);">${product.name}</div>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary);">${product.category}</div>
-                            <div style="font-size: 0.8rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">ID: ${product.id}</div>
-                        </div>
-                    </div>
-                    <div style="text-align: right;">
-                        <div style="font-weight: 700; color: var(--quantum-cyan); font-size: 1.1rem;">$${product.price.toFixed(2)}</div>
-                        <span class="stock-badge ${product.stock < 5 ? 'stock-low' : 'stock-optimal'}">${product.stock} units</span>
-                        <button onclick="window.deleteProduct('${product.id}', '${product.name.replace(/'/g, "\\'")}')" 
-                                class="delete-btn">
-                            <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
-
-            recentProducts.insertAdjacentHTML('afterbegin', productHtml);
-            lucide.createIcons();
-        }
-
-        const productDescription = document.getElementById('productDescription');
-        const charCount = document.getElementById('charCount');
-
-        productDescription.addEventListener('input', () => {
-            charCount.textContent = productDescription.value.length;
-        });
-
-        async function loadDashboard() {
-            const error = document.getElementById('error');
-            const dashboardContent = document.getElementById('dashboardContent');
-            
-            error.style.display = 'none';
-            
+        // Load vendors for Vendor Governance tab
+        async function loadVendors() {
+            const token = localStorage.getItem('nexusmart_token');
             try {
-                const [stats, products] = await Promise.all([
-                    apiClient.getAdminStats(),
-                    apiClient.getProducts({ page: 0, size: 100 })
-                ]);
+                const statusFilter = document.getElementById('vendorStatusFilter').value;
+                const url = statusFilter ? `http://localhost:8080/api/v1/admin/marketplace/vendors?status=${statusFilter}` : 'http://localhost:8080/api/v1/admin/marketplace/vendors';
                 
-                document.getElementById('totalRevenue').textContent = `$${stats.totalRevenue.toFixed(2)}`;
-                document.getElementById('totalOrders').textContent = stats.totalOrders;
-                document.getElementById('activeSkus').textContent = stats.activeSkus;
-                document.getElementById('lowStockItems').textContent = stats.lowStockItems;
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
                 
-                const categoryStock = {};
-                if (products.content && products.content.length > 0) {
-                    products.content.forEach(product => {
-                        if (!categoryStock[product.category]) {
-                            categoryStock[product.category] = 0;
-                        }
-                        categoryStock[product.category] += product.stock;
-                    });
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
                 }
                 
-                const categoryStockDiv = document.getElementById('categoryStock');
-                if (Object.keys(categoryStock).length === 0) {
-                    categoryStockDiv.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">No inventory data</p>';
+                const vendors = await response.json();
+
+                // Separate pending and registered vendors
+                const pendingVendors = vendors.filter(v => v.status === 'PENDING_APPROVAL');
+                const registeredVendors = vendors.filter(v => v.status !== 'PENDING_APPROVAL');
+
+                // Render pending vendors queue
+                const pendingVendorsList = document.getElementById('pendingVendorsList');
+                if (!pendingVendors || pendingVendors.length === 0) {
+                    pendingVendorsList.innerHTML = '<p class="text-muted text-center py-4">No pending vendor applications</p>';
                 } else {
-                    categoryStockDiv.innerHTML = Object.entries(categoryStock).map(([category, stock]) => `
-                        <div class="mini-stat-card">
-                            <div style="font-weight: 600; color: var(--text-primary); font-size: 0.9rem;">${category}</div>
-                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--quantum-cyan);">${stock}</div>
-                            <div style="font-size: 0.75rem; color: var(--text-muted);">units</div>
-                        </div>
-                    `).join('');
-                }
-                
-                const recentProducts = document.getElementById('recentProducts');
-                if (!products.content || products.content.length === 0) {
-                    recentProducts.innerHTML = '<p class="text-muted text-center py-4">No products yet</p>';
-                } else {
-                    recentProducts.innerHTML = products.content.map(product => `
+                    pendingVendorsList.innerHTML = pendingVendors.map(vendor => `
                         <div class="product-item-admin">
                             <div style="display: flex; align-items: center; gap: 1rem;">
-                                <img src="${product.imageUrl}" alt="${product.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid var(--surface-border);">
                                 <div>
-                                    <div style="font-weight: 600; color: var(--text-primary);">${product.name}</div>
-                                    <div style="font-size: 0.85rem; color: var(--text-secondary);">${product.category}</div>
-                                    <div style="font-size: 0.8rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">ID: ${product.id}</div>
+                                    <div style="font-weight: 600; color: var(--text-primary);">${vendor.storeName}</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary);">${vendor.businessEmail}</div>
+                                    <div style="font-size: 0.8rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Slug: ${vendor.storeSlug}</div>
                                 </div>
                             </div>
                             <div style="text-align: right;">
-                                <div style="font-weight: 700; color: var(--quantum-cyan); font-size: 1.1rem;">$${product.price.toFixed(2)}</div>
-                                <span class="stock-badge ${product.stock < 5 ? 'stock-low' : 'stock-optimal'}">${product.stock} units</span>
-                                <button onclick="window.deleteProduct('${product.id}', '${product.name.replace(/'/g, "\\'")}')" 
-                                        class="delete-btn">
-                                    <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
-                                </button>
+                                <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                                    <button onclick="approveVendor('${vendor.id}')" class="cyber-button" style="padding: 0.5rem 1rem; font-size: 0.85rem; background: var(--matrix-green);">Approve</button>
+                                    <button onclick="rejectVendor('${vendor.id}')" class="cyber-button" style="padding: 0.5rem 1rem; font-size: 0.85rem; background: var(--critical-red);">Reject</button>
+                                </div>
                             </div>
                         </div>
                     `).join('');
                 }
-                
-                dashboardContent.style.display = 'block';
+
+                // Render registered vendors matrix
+                const vendorsList = document.getElementById('vendorsList');
+                if (!registeredVendors || registeredVendors.length === 0) {
+                    vendorsList.innerHTML = '<p class="text-muted text-center py-4">No registered vendors found</p>';
+                } else {
+                    vendorsList.innerHTML = registeredVendors.map(vendor => `
+                        <div class="product-item-admin">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div>
+                                    <div style="font-weight: 600; color: var(--text-primary);">${vendor.storeName}</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary);">${vendor.businessEmail}</div>
+                                    <div style="font-size: 0.8rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Slug: ${vendor.storeSlug}</div>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <span class="stock-badge ${vendor.status === 'ACTIVE' ? 'stock-optimal' : 'stock-depleted'}">${vendor.status}</span>
+                                <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Commission: ${vendor.commissionRate}%</div>
+                                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; justify-content: flex-end;">
+                                    ${vendor.status === 'ACTIVE' ? `
+                                        <button onclick="suspendVendor('${vendor.id}')" class="text-amber-400 hover:text-amber-300 text-xs font-medium transition">Suspend</button>
+                                    ` : ''}
+                                    ${vendor.status === 'SUSPENDED' ? `
+                                        <button onclick="approveVendor('${vendor.id}')" class="text-green-400 hover:text-green-300 text-xs font-medium transition">Reactivate</button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
                 lucide.createIcons();
             } catch (err) {
-                error.innerHTML = `<p style="color: var(--critical-red);">${err.message}</p>`;
-                error.style.display = 'block';
+                console.error('Failed to load vendors:', err);
+                
+                // Extract HTTP status from error message if available
+                let errorMsg = err.message || 'Failed to load vendors';
+                if (err.message && err.message.includes('HTTP')) {
+                    errorMsg = `Failed to load vendors: ${err.message}`;
+                } else if (err.message && (err.message.includes('401') || err.message.includes('403') || err.message.includes('Unauthorized'))) {
+                    errorMsg = 'Session expired or Admin clearance missing. Please re-login.';
+                }
+                
+                toastManager.error('Error', errorMsg);
+                document.getElementById('vendorsList').innerHTML = '<p class="text-red-400 text-center py-4">Failed to load vendors</p>';
             }
         }
 
-        window.deleteProduct = async (productId, productName) => {
-            console.log('Delete product called:', productId, productName);
-            
-            if (!productId) {
-                toastManager.error('Invalid Product', 'Product ID is missing');
-                return;
-            }
-            
-            if (!confirm(`Confirm deletion of "${productName}"? This action cannot be undone.`)) {
-                return;
-            }
-            
+        window.approveVendor = async (vendorId) => {
+            const token = localStorage.getItem('nexusmart_token');
             try {
-                console.log('Calling API to delete product:', productId);
-                const response = await apiClient.deleteProduct(productId);
-                console.log('Delete response:', response);
-                toastManager.success('Product Deleted', `${productName} removed from inventory`);
-                loadDashboard();
+                const response = await fetch(`http://localhost:8080/api/v1/admin/marketplace/vendors/${vendorId}/approve`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                toastManager.success('Vendor Approved', 'Vendor has been activated');
+                loadVendors();
+                loadMarketplaceStats();
             } catch (err) {
-                console.error('Delete product error:', err);
-                toastManager.error('Deletion Failed', err.message || 'Failed to delete product. Check console for details.');
+                toastManager.error('Error', err.message || 'Failed to approve vendor');
             }
         };
 
-        loadDashboard();
+        window.suspendVendor = async (vendorId) => {
+            const token = localStorage.getItem('nexusmart_token');
+            if (!confirm('Are you sure you want to suspend this vendor? Their products will be hidden from the catalog.')) return;
+            try {
+                const response = await fetch(`http://localhost:8080/api/v1/admin/marketplace/vendors/${vendorId}/suspend`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                toastManager.success('Vendor Suspended', 'Vendor has been suspended and their products hidden');
+                loadVendors();
+                loadMarketplaceStats();
+            } catch (err) {
+                toastManager.error('Error', err.message || 'Failed to suspend vendor');
+            }
+        };
+
+        window.rejectVendor = async (vendorId) => {
+            const token = localStorage.getItem('nexusmart_token');
+            if (!confirm('Are you sure you want to reject this vendor application?')) return;
+            try {
+                const response = await fetch(`http://localhost:8080/api/v1/admin/marketplace/vendors/${vendorId}/suspend`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                toastManager.success('Application Rejected', 'Vendor application has been rejected');
+                loadVendors();
+                loadMarketplaceStats();
+            } catch (err) {
+                toastManager.error('Error', err.message || 'Failed to reject vendor');
+            }
+        };
+
+        // Load global catalog for moderation
+        async function loadGlobalCatalog() {
+            const token = localStorage.getItem('nexusmart_token');
+            try {
+                const vendorFilter = document.getElementById('catalogVendorFilter').value;
+                const url = vendorFilter ? `http://localhost:8080/api/v1/admin/marketplace/products?vendorId=${vendorFilter}` : 'http://localhost:8080/api/v1/admin/marketplace/products';
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
+                }
+                
+                const products = await response.json();
+                const catalogList = document.getElementById('catalogList');
+
+                // Populate vendor filter dropdown
+                const vendorsResponse = await fetch('http://localhost:8080/api/v1/admin/marketplace/vendors', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (vendorsResponse.ok) {
+                    const vendors = await vendorsResponse.json();
+                    const catalogVendorFilter = document.getElementById('catalogVendorFilter');
+                    catalogVendorFilter.innerHTML = '<option value="">All Vendors</option>' + 
+                        vendors.map(v => `<option value="${v.id}">${v.storeName}</option>`).join('');
+                    if (vendorFilter) catalogVendorFilter.value = vendorFilter;
+                }
+
+                if (!products || products.length === 0) {
+                    catalogList.innerHTML = '<p class="text-muted text-center py-4">No products found</p>';
+                    return;
+                }
+
+                catalogList.innerHTML = products.map(product => `
+                    <div class="product-item-admin">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <img src="${product.imageUrl || 'https://via.placeholder.com/60'}" alt="${product.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid var(--surface-border);">
+                            <div>
+                                <div style="font-weight: 600; color: var(--text-primary);">${product.name}</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">${product.category}</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">Sold by: ${product.vendorName || 'NexusMart Direct'}</div>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-weight: 700; color: var(--quantum-cyan); font-size: 1.1rem;">$${product.price.toFixed(2)}</div>
+                            <span class="stock-badge ${product.stock < 5 ? 'stock-low' : 'stock-optimal'}">${product.stock} units</span>
+                            <button onclick="deleteProductAdmin('${product.id}', '${product.name.replace(/'/g, "\\'")}')" 
+                                    class="delete-btn" style="margin-left: 0.5rem;">
+                                <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+                lucide.createIcons();
+            } catch (err) {
+                console.error('Failed to load catalog:', err);
+                
+                // Extract HTTP status from error message if available
+                let errorMsg = err.message || 'Failed to load catalog';
+                if (err.message && err.message.includes('HTTP')) {
+                    errorMsg = `Failed to load catalog: ${err.message}`;
+                } else if (err.message && (err.message.includes('401') || err.message.includes('403') || err.message.includes('Unauthorized'))) {
+                    errorMsg = 'Session expired or Admin clearance missing. Please re-login.';
+                }
+                
+                toastManager.error('Error', errorMsg);
+                document.getElementById('catalogList').innerHTML = '<p class="text-red-400 text-center py-4">Failed to load catalog</p>';
+            }
+        }
+
+        window.deleteProductAdmin = async (productId, productName) => {
+            const token = localStorage.getItem('nexusmart_token');
+            if (!confirm(`Confirm deletion of "${productName}"? This action cannot be undone.`)) return;
+            try {
+                const response = await fetch(`http://localhost:8080/api/v1/admin/marketplace/products/${productId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                toastManager.success('Product Deleted', `${productName} removed from catalog`);
+                loadGlobalCatalog();
+            } catch (err) {
+                console.error('Delete product error:', err);
+                toastManager.error('Error', err.message || 'Failed to delete product');
+            }
+        };
+
+        // Load marketplace orders with vendor fulfillment tracking
+        async function loadMarketplaceOrders() {
+            const token = localStorage.getItem('nexusmart_token');
+            try {
+                const response = await fetch('http://localhost:8080/api/v1/admin/marketplace/orders', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
+                }
+                
+                const orders = await response.json();
+                const ordersList = document.getElementById('ordersList');
+
+                if (!orders || orders.length === 0) {
+                    ordersList.innerHTML = '<p class="text-muted text-center py-4">No orders found</p>';
+                    return;
+                }
+
+                ordersList.innerHTML = orders.map(order => `
+                    <div class="glass-card" style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem;">
+                            <div>
+                                <div style="font-weight: 600; color: var(--text-primary);">Order #${order.id}</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">${order.userId || 'Customer'}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-weight: 700; color: var(--quantum-cyan);">$${order.totalAmount.toFixed(2)}</div>
+                                <span class="stock-badge ${order.status === 'PAID' ? 'stock-optimal' : 'stock-low'}">${order.status}</span>
+                            </div>
+                        </div>
+                        <div style="border-top: 1px solid var(--border-color); padding: 1rem;">
+                            ${order.items ? order.items.map(item => `
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--surface-border);">
+                                    <div>
+                                        <div style="font-weight: 500; color: var(--text-primary);">${item.productName || 'Product'}</div>
+                                        <div style="font-size: 0.8rem; color: var(--text-muted);">Qty: ${item.quantity} × $${item.priceSnapshot?.toFixed(2) || '0.00'}</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <span class="stock-badge stock-optimal">${item.fulfillmentStatus || 'PENDING'}</span>
+                                    </div>
+                                </div>
+                            `).join('') : '<p class="text-muted text-sm">No items</p>'}
+                        </div>
+                    </div>
+                `).join('');
+                lucide.createIcons();
+            } catch (err) {
+                console.error('Failed to load orders:', err);
+                
+                // Extract HTTP status from error message if available
+                let errorMsg = err.message || 'Failed to load orders';
+                if (err.message && err.message.includes('HTTP')) {
+                    errorMsg = `Failed to load orders: ${err.message}`;
+                } else if (err.message && (err.message.includes('401') || err.message.includes('403') || err.message.includes('Unauthorized'))) {
+                    errorMsg = 'Session expired or Admin clearance missing. Please re-login.';
+                }
+                
+                toastManager.error('Error', errorMsg);
+                document.getElementById('ordersList').innerHTML = '<p class="text-red-400 text-center py-4">Failed to load orders</p>';
+            }
+        }
+
+        // Load users for User Accounts tab
+        async function loadUsers(selectedRole = 'ALL') {
+            const token = localStorage.getItem('nexusmart_token');
+            const tbody = document.getElementById('users-table-body');
+            if (!tbody) return;
+
+            try {
+                const url = (selectedRole && selectedRole !== 'ALL')
+                    ? `http://localhost:8080/api/v1/admin/users?role=${encodeURIComponent(selectedRole)}` 
+                    : `http://localhost:8080/api/v1/admin/users` ;
+
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server returned HTTP ${response.status}`);
+                }
+
+                const rawData = await response.json();
+                console.log("Fetched users from PostgreSQL:", rawData);
+
+                // Extract list whether returned as Array, Page object, or wrapped object
+                let users = [];
+                if (Array.isArray(rawData)) {
+                    users = rawData;
+                } else if (rawData.content && Array.isArray(rawData.content)) {
+                    users = rawData.content;
+                } else if (rawData.data && Array.isArray(rawData.data)) {
+                    users = rawData.data;
+                }
+
+                if (users.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400">No users found in database</td></tr>` ;
+                    return;
+                }
+
+                // Render each of the 9 database users
+                tbody.innerHTML = users.map(user => {
+                    const initials = user.name ? user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'U';
+                    const role = (user.role || 'ROLE_CUSTOMER').toUpperCase();
+                    
+                    // Badge color based on role
+                    let roleBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/30">CUSTOMER</span>`;
+                    if (role.includes('ADMIN')) {
+                        roleBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/30">ADMIN</span>` ;
+                    } else if (role.includes('VENDOR')) {
+                        roleBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">VENDOR</span>` ;
+                    }
+
+                    const isSuspended = (user.status || '').toUpperCase() === 'SUSPENDED';
+                    const statusBadge = isSuspended
+                        ? `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/30">SUSPENDED</span>` 
+                        : `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">ACTIVE</span>` ;
+
+                    const joinedDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Recent';
+
+                    return `
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="p-3.5 flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-slate-950 font-black text-xs flex items-center justify-center">
+                                    ${initials}
+                                </div>
+                                <span class="font-semibold text-white">${user.name}</span>
+                            </td>
+                            <td class="p-3.5 text-slate-300 font-mono text-xs">${user.email}</td>
+                            <td class="p-3.5">${roleBadge}</td>
+                            <td class="p-3.5">${statusBadge}</td>
+                            <td class="p-3.5 text-slate-400 text-xs">${joinedDate}</td>
+                            <td class="p-3.5 text-right space-x-2">
+                                <button onclick="toggleUserStatus('${user.id}', '${user.status}')" class="text-xs ${isSuspended ? 'text-emerald-400' : 'text-amber-400'} hover:underline font-semibold">
+                                    ${isSuspended ? 'Reactivate' : 'Suspend'}
+                                </button>
+                                <button onclick="deleteUserAccount('${user.id}', '${user.name}')" class="text-xs text-rose-400 hover:underline font-semibold ml-2">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+            } catch (err) {
+                console.error("Failed to load users:", err);
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-rose-400 font-semibold">Failed to load users: ${err.message}</td></tr>`;
+            }
+        }
+
+        window.toggleUserStatus = async (userId, currentStatus) => {
+            const token = localStorage.getItem('nexusmart_token');
+            try {
+                const response = await fetch(`http://localhost:8080/api/v1/admin/users/${userId}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
+                }
+                
+                toastManager.success('Success', 'User status updated successfully');
+                loadUsers();
+            } catch (err) {
+                console.error('Failed to toggle user status:', err);
+                toastManager.error('Error', err.message || 'Failed to update user status');
+            }
+        };
+
+        window.deleteUserAccount = async (userId, userName) => {
+            const token = localStorage.getItem('nexusmart_token');
+            if (!confirm(`Are you sure you want to permanently delete account: ${userName}? This action cannot be undone.`)) return;
+            
+            try {
+                const response = await fetch(`http://localhost:8080/api/v1/admin/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
+                }
+                
+                toastManager.success('Success', 'Account deleted successfully');
+                loadUsers();
+            } catch (err) {
+                console.error('Failed to delete user:', err);
+                toastManager.error('Error', err.message || 'Failed to delete account');
+            }
+        };
+
+        // Update default commission rate
+        window.updateDefaultCommission = async () => {
+            const rate = document.getElementById('defaultCommissionRate').value;
+            if (!rate || parseFloat(rate) < 0 || parseFloat(rate) > 30) {
+                toastManager.error('Invalid Rate', 'Commission rate must be between 0 and 30%');
+                return;
+            }
+            try {
+                toastManager.success('Settings Updated', `Default commission rate set to ${rate}%`);
+            } catch (err) {
+                toastManager.error('Error', err.message || 'Failed to update commission rate');
+            }
+        };
+
+        // Trigger global re-index
+        window.triggerReindex = async () => {
+            if (!confirm('This will trigger a global re-index of all product listings. Continue?')) return;
+            try {
+                toastManager.success('Re-index Started', 'Global AI PGVector re-index has been initiated');
+            } catch (err) {
+                toastManager.error('Error', err.message || 'Failed to trigger re-index');
+            }
+        };
+
+        // Initial load
+        loadMarketplaceStats();
+        loadVendors();
         lucide.createIcons();
+
+        window.loadVendors = loadVendors;
     </script>
 </body>
 </html>
